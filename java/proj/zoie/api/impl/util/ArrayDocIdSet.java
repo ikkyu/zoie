@@ -24,12 +24,12 @@ import org.apache.lucene.search.DocIdSetIterator;
 public class ArrayDocIdSet extends DocIdSet
 {
   private final int[] _docids;
-  
+
   public ArrayDocIdSet(int[] docids)
   {
     _docids = docids;
   }
-  
+
   final private static int binarySearch(int[] a, int key) {
     return binarySearch(a, key, 0, a.length-1);
   }
@@ -39,7 +39,7 @@ public class ArrayDocIdSet extends DocIdSet
       int mid = (low + high) >>> 1;
       int midVal = a[mid];
       int cmp;
-      
+
       cmp = midVal - key;
 
       if (cmp < 0)
@@ -51,7 +51,7 @@ public class ArrayDocIdSet extends DocIdSet
     }
     return -(low + 1);
   }
-  
+
   @Override
   public DocIdSetIterator iterator()
   {
@@ -65,7 +65,7 @@ public class ArrayDocIdSet extends DocIdSet
       {
         return doc;
       }
-      
+
       @Override
       public int nextDoc() throws IOException
       {
@@ -77,7 +77,7 @@ public class ArrayDocIdSet extends DocIdSet
         }
         return DocIdSetIterator.NO_MORE_DOCS;
       }
-      
+
       @Override
       public int advance(int target) throws IOException
       {

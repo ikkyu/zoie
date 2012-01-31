@@ -45,7 +45,7 @@ public class UIDFilter extends Filter {
 			"UIDFilter may only load from ZoieIndexReader instances");
 		}
 	}
-	
+
 	/**
 	 * Convenience method to build a Query from a uid list
 	 * @param uids

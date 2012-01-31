@@ -32,13 +32,13 @@ import proj.zoie.api.ZoieException;
  * it already accumulate this many, then we block the incoming events until the number of
  * buffered events drop below this limit after some of them being sent to background
  * DataConsumer.
- * 
+ *
  * @param <V>
  */
 public class AsyncDataConsumer<V> implements DataConsumer<V>
 {
   private static final Logger log = Logger.getLogger(AsyncDataConsumer.class);
-  
+
   private volatile ConsumerThread _consumerThread;
   private volatile DataConsumer<V> _consumer;
   private long _currentVersion;
@@ -60,7 +60,7 @@ public class AsyncDataConsumer<V> implements DataConsumer<V>
     _batchSize = 1; // default
     _consumerThread = null;
   }
-  
+
   /**
    * Start the background thread that batch-processes the incoming data events by sending them to the background DataConsumer.
    * <br>
@@ -72,7 +72,7 @@ public class AsyncDataConsumer<V> implements DataConsumer<V>
     _consumerThread.setDaemon(true);
     _consumerThread.start();
   }
-  
+
   /**
    * Stops the background thread.
    * <br>
@@ -83,7 +83,7 @@ public class AsyncDataConsumer<V> implements DataConsumer<V>
   {
     _consumerThread.terminate();
   }
-  
+
   /**
    * Set the background DataConsumer.
    * @param consumer the DataConsumer that actually consumes the data events.
@@ -95,7 +95,7 @@ public class AsyncDataConsumer<V> implements DataConsumer<V>
       _consumer = consumer;
     }
   }
-  
+
   /**
    * Sets the size of each batch of events that it sends to background DataConsumer. <br><br>
    * The private member _batchSize is the 'soft' size limit of each event batch.
@@ -114,7 +114,7 @@ public class AsyncDataConsumer<V> implements DataConsumer<V>
       _batchSize = Math.max(1, batchSize);
     }
   }
-  
+
   /**
    * @return the intended limit of batch size.
    */
@@ -125,7 +125,7 @@ public class AsyncDataConsumer<V> implements DataConsumer<V>
       return _batchSize;
     }
   }
-  
+
   /**
    * @return the number of unprocessed events in buffered already.
    */
@@ -136,7 +136,7 @@ public class AsyncDataConsumer<V> implements DataConsumer<V>
       return (_batch != null ? _batch.size() : 0);
     }
   }
-  
+
   public long getCurrentVersion()
   {
     synchronized(this)
@@ -144,17 +144,17 @@ public class AsyncDataConsumer<V> implements DataConsumer<V>
       return _currentVersion;
     }
   }
-  
+
   /**
    * Waits until all the buffered data events are processed.
-   * @param timeout the max amount of time to wait in milliseconds. 
+   * @param timeout the max amount of time to wait in milliseconds.
    * @throws ZoieException
    */
   public void flushEvents(long timeout) throws ZoieException
   {
     syncWthVersion(timeout, _bufferedVersion);
   }
-  
+
   /**
    * Waits until all the buffered data events up to specified version are processed.
    * @param timeInMillis the max amount of time to wait in milliseconds.
@@ -163,9 +163,9 @@ public class AsyncDataConsumer<V> implements DataConsumer<V>
    */
   public void syncWthVersion(long timeInMillis, long version) throws ZoieException
   {
-    
+
     if(_consumerThread == null) throw new ZoieException("not running");
-    
+
     synchronized(this)
     {
       while(_currentVersion < version)
@@ -188,7 +188,7 @@ public class AsyncDataConsumer<V> implements DataConsumer<V>
       }
     }
   }
-  
+
   /**
    * consumption of a collection of data events. Note that this method may have a side
    * effect. That is it may empty the Collection passed in after execution. <br><br>
@@ -196,16 +196,16 @@ public class AsyncDataConsumer<V> implements DataConsumer<V>
    * If too many (>=_batchSize) amount of data events are already buffered,
    * it waits until the background DataConsumer consumes some of the events before
    * it add new events to the buffer. This throttles the amount of events in each batch.
-   * 
+   *
    * @param data
    * @throws ZoieException
    * @see proj.zoie.api.DataConsumer#consume(java.util.Collection)
-   * 
+   *
    */
   public void consume(Collection<DataEvent<V>> data) throws ZoieException
   {
     if (data == null || data.size() == 0) return;
-    
+
     synchronized(this)
     {
       while(_batch.size() >= _batchSize)
@@ -230,12 +230,12 @@ public class AsyncDataConsumer<V> implements DataConsumer<V>
       this.notifyAll(); // wake up the thread waiting in flushBuffer()
     }
   }
-  
+
   protected final void flushBuffer()
   {
     long version;
     LinkedList<DataEvent<V>> currentBatch;
-    
+
     synchronized(this)
     {
       while(_batch.size() == 0)
@@ -252,10 +252,10 @@ public class AsyncDataConsumer<V> implements DataConsumer<V>
       version = Math.max(_currentVersion, _bufferedVersion);
       currentBatch = _batch;
       _batch = new LinkedList<DataEvent<V>>();
-      
+
       this.notifyAll(); // wake up the thread waiting in consume(...)
     }
-    
+
     if(_consumer != null)
     {
       try
@@ -267,23 +267,23 @@ public class AsyncDataConsumer<V> implements DataConsumer<V>
         log.error(e.getMessage(), e);
       }
     }
-    
+
     synchronized(this)
     {
       _currentVersion = version;
       this.notifyAll(); // wake up the thread waiting in syncWthVersion()
-    }    
+    }
   }
-  
+
   private final class ConsumerThread extends IndexingThread
   {
     boolean _stop = false;
-    
+
     ConsumerThread()
     {
       super("ConsumerThread");
     }
-    
+
     public void terminate()
     {
       _stop = true;
@@ -292,7 +292,7 @@ public class AsyncDataConsumer<V> implements DataConsumer<V>
         AsyncDataConsumer.this.notifyAll();
       }
     }
-    
+
     public void run()
     {
       while(!_stop)
@@ -301,7 +301,7 @@ public class AsyncDataConsumer<V> implements DataConsumer<V>
       }
     }
   }
-  
+
   /**
    * @return the version number of events that it has received but not necessarily processed.
    * @see proj.zoie.api.DataConsumer#getVersion()

@@ -10,11 +10,11 @@ import org.apache.lucene.search.DocIdSetIterator;
 public class ZoieSegmentTermDocs extends FilterTermDocs {
 	private final DocIdSetIterator _delSetIterator;
     private int _nextDelDoc;
-    
+
 	public ZoieSegmentTermDocs(TermDocs in,DocIdSet delSet) throws IOException{
 		this(in,delSet.iterator());
 	}
-	
+
 	public ZoieSegmentTermDocs(TermDocs in, DocIdSetIterator delSetIterator) throws IOException {
 		super(in);
 		_delSetIterator = delSetIterator;
@@ -47,7 +47,7 @@ public class ZoieSegmentTermDocs extends FilterTermDocs {
 			while (i < docs.length) {
 				if (!in.next())
 					return i;
-	
+
 				int doc = in.doc();
 				if (doc<_nextDelDoc){
 					docs[i] = doc;

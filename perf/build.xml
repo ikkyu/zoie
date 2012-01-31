@@ -6,9 +6,9 @@
   <property name="index.perf.dir" location="index-perf" />
   <property name="index.data" location="index.tar.gz"/>
   <property name="perf.src" value="src/java" />
-  
+
   <property name="perf.build" location="perf-build"/>
-    
+
   <path id="compile.class.path">
       <fileset dir="${lib.dir}/master">
         <include name="*.jar" />
@@ -17,24 +17,24 @@
         <include name="zoie-${version}.jar" />
       </fileset>
   </path>
-    
+
   <target name="clean">
     <delete dir="${perf.build}"/>
   	<delete dir="${index.perf.dir}"/>
   	<delete dir="${index}"/>
   </target>
-    
+
   <target name="init">
     <mkdir dir="${perf.build}"/>
   </target>
-    
+
   <target name="compile" depends="init">
     <javac debug="true" destdir="${perf.build}">
       <src path="${perf.src}"/>
       <classpath refid="compile.class.path"/>
     </javac>
   </target>
-	
+
   <target name="run-perf" depends="compile">
   	<delete dir="${index}"/>
   	<echo message="expanding index data" />
@@ -56,7 +56,7 @@
   	<delete dir="${index.perf.dir}"/>
   	<delete dir="${index}"/>
   </target>
-  
+
   <target name="dist" depends="compile">
       <war destfile="${dist}/zoie-perf.war" webxml="${resource}/web.xml" >
         <classes dir="${perf.build}"/>

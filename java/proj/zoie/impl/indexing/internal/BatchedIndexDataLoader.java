@@ -38,12 +38,12 @@ import proj.zoie.impl.indexing.IndexingEventListener.IndexingEvent;
 /**
  * Runs a background thread that flushes incoming data events in batch to the background DataConsumer.
  * Incoming data is buffered first.
- * A flush is carried out when the batch size is significant, 
+ * A flush is carried out when the batch size is significant,
  * a client requesting a flush, or significant amount of time has passed.
  * The data is flushed to the underlying dataloader, which is a DataConsumer.
  * When incoming data comes in too fast, the thread sending data will be put on hold.
  * This acts as incoming data throttling.
- * 
+ *
  * @param <R>
  * @param <V>
  */
@@ -62,9 +62,9 @@ public class BatchedIndexDataLoader<R extends IndexReader,V> implements DataCons
 	protected final SearchIndexManager<R> _idxMgr;
 	protected final ZoieIndexableInterpreter<V> _interpreter;
 	private final Queue<IndexingEventListener> _lsnrList;
-	  
+
 	  private static Logger log = Logger.getLogger(BatchedIndexDataLoader.class);
-	  
+
 	  /**
 	   * @param dataLoader
 	   * @param batchSize
@@ -93,7 +93,7 @@ public class BatchedIndexDataLoader<R extends IndexReader,V> implements DataCons
 	    _interpreter = interpreter;
 	    _lsnrList = lsnrList;
 	  }
-	  
+
 	  protected final void fireIndexingEvent(IndexingEvent evt){
 		  if (_lsnrList!=null && _lsnrList.size() > 0){
   		    synchronized(_lsnrList) {
@@ -108,45 +108,45 @@ public class BatchedIndexDataLoader<R extends IndexReader,V> implements DataCons
   		    }
 		  }
 	  }
-	  
+
 	  public synchronized int getMaxBatchSize()
 	  {
 	    return _maxBatchSize;
 	  }
-	  
+
 	  public synchronized void setMaxBatchSize(int maxBatchSize)
 	  {
 	    _maxBatchSize = Math.max(maxBatchSize, 1);
 	    _batchSize = Math.min(_batchSize, _maxBatchSize);
 	  }
-	  
+
 	  public synchronized int getBatchSize()
 	  {
 	    return _batchSize;
 	  }
-	  
+
 	  public synchronized void setBatchSize(int batchSize)
 	  {
 	    _batchSize=Math.min(Math.max(1, batchSize), _maxBatchSize);
 	  }
-	  
+
 	  public synchronized long getDelay()
 	  {
 	    return _delay;
 	  }
-	  
+
 	  public synchronized void setDelay(long delay)
 	  {
 	    _delay=delay;
 	  }
-	  
+
 	  public synchronized int getEventCount()
 	  {
 	    return _eventCount;
 	  }
-	  
+
 	  /**
-	   * 
+	   *
 	   * @see proj.zoie.api.DataConsumer#consume(java.util.Collection)
 	   */
 	  public void consume(Collection<DataEvent<V>> events) throws ZoieException
@@ -164,7 +164,7 @@ public class BatchedIndexDataLoader<R extends IndexReader,V> implements DataCons
 	        {
 	          DataEvent<V> event = iter.next();
 	          ZoieIndexable indexable = ((ZoieIndexableInterpreter<V>) _interpreter).convertAndInterpret(event.getData());
-	          
+
 	          DataEvent<ZoieIndexable> newEvent =
 	              new DataEvent<ZoieIndexable>(event.getVersion(), indexable);
 	          indexableList.add(newEvent);
@@ -184,7 +184,7 @@ public class BatchedIndexDataLoader<R extends IndexReader,V> implements DataCons
 	          {
 	            throw new ZoieException("load manager has stopped");
 	          }
-	          
+
 	          try
 	          {
 	            this.wait(60000); // 1 min
@@ -200,12 +200,12 @@ public class BatchedIndexDataLoader<R extends IndexReader,V> implements DataCons
 	      }
 	    }
 	  }
-	  
+
       public synchronized int getCurrentBatchSize()
       {
         return (_batchList != null ? _batchList.size() : 0);
       }
-      
+
       /**
        * This method needs to be called within a synchronized block on 'this'.
        * @return the list of data events already received. A new list is created to receive new data events.
@@ -216,7 +216,7 @@ public class BatchedIndexDataLoader<R extends IndexReader,V> implements DataCons
         _batchList=new LinkedList<DataEvent<ZoieIndexable>>();
         return tmpList;
 	  }
-	  
+
 	  /**
 	   * Wait for timeOut amount of time for the indexing thread to process data events.
 	   * If there are still remaining unprocessed events by the end of timeOut duration,
@@ -226,7 +226,7 @@ public class BatchedIndexDataLoader<R extends IndexReader,V> implements DataCons
 	   */
 	  public void flushEvents(long timeOut) throws ZoieException
 	  {
-	    
+
 	    synchronized(this)
 	    {
 	      while(_eventCount>0)
@@ -234,11 +234,11 @@ public class BatchedIndexDataLoader<R extends IndexReader,V> implements DataCons
 	        _flush=true;
 	        this.notifyAll();
 	        long now1 = System.currentTimeMillis();
-		    
+
 	        if (timeOut<=0)
 	        {
 	          log.error("sync timed out");
-	          throw new ZoieException("timed out");          
+	          throw new ZoieException("timed out");
 	        }
 	        try
 	        {
@@ -248,9 +248,9 @@ public class BatchedIndexDataLoader<R extends IndexReader,V> implements DataCons
 	        {
 	          throw new ZoieException(e.getMessage());
 	        }
-	        
+
 	        long now2 = System.currentTimeMillis();
-	        
+
 	        timeOut -= (now2 - now1);
 	      }
 	    }
@@ -258,7 +258,7 @@ public class BatchedIndexDataLoader<R extends IndexReader,V> implements DataCons
 
 	  /**
 	   * Used by the indexing thread to flush incoming data events in batch.
-	   * A flush is carried out when the batch size is significant, 
+	   * A flush is carried out when the batch size is significant,
 	   * a client requesting a flush, or significant amount of time has passed.
 	   * The data is flushed to the underlying dataloader, which is a DataConsumer.
 	   */
@@ -294,7 +294,7 @@ public class BatchedIndexDataLoader<R extends IndexReader,V> implements DataCons
             tmpList = getBatchList();
           }
         }
-        
+
         if (tmpList != null)
         {
           long t1=System.currentTimeMillis();
@@ -325,14 +325,14 @@ public class BatchedIndexDataLoader<R extends IndexReader,V> implements DataCons
           log.debug("batch size is 0");
         }
 	  }
-	  
+
 	  protected class LoaderThread extends IndexingThread
-	  {		  
+	  {
 	    LoaderThread()
 	    {
 	      super("disk indexer data loader");
 	    }
-	    
+
 	    public void run()
 	    {
 	      while(!_stop)
@@ -341,7 +341,7 @@ public class BatchedIndexDataLoader<R extends IndexReader,V> implements DataCons
 	      }
 	    }
 	  }
-	  
+
 	  /**
 	   * Starts the build-in indexing thread.
 	   */
@@ -361,7 +361,7 @@ public class BatchedIndexDataLoader<R extends IndexReader,V> implements DataCons
 	      _stop = true;
 	      this.notifyAll();
 	    }
-	    try 
+	    try
 	    {
 			_loadMgrThread.join();
 		} catch (InterruptedException e) {
@@ -379,8 +379,8 @@ public class BatchedIndexDataLoader<R extends IndexReader,V> implements DataCons
 	    {
 	      return (inner == null ? null : new ZoieIndexableDecorator(inner));
 	    }
-	    
-	    
+
+
 
 	    @Override
 		public IndexingReq[] buildIndexingReqs() {
@@ -400,7 +400,7 @@ public class BatchedIndexDataLoader<R extends IndexReader,V> implements DataCons
 	    }
 
 	  }
-	  
+
 	public long getVersion()
 	{
 	  throw new UnsupportedOperationException();

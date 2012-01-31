@@ -29,41 +29,41 @@ import proj.zoie.mbean.DataProviderAdminMBean;
 
 public abstract class StreamDataProvider<V> implements DataProvider<V>,DataProviderAdminMBean{
 	private static final Logger log = Logger.getLogger(StreamDataProvider.class);
-	
+
 	private int _batchSize;
 	private DataConsumer<V> _consumer;
 	private DataThread<V> _thread;
-	
+
 	public StreamDataProvider()
 	{
 		_batchSize=1;
 		_consumer=null;
 	}
-	
+
 	public void setDataConsumer(DataConsumer<V> consumer)
 	{
-	  _consumer=consumer;	
+	  _consumer=consumer;
 	}
-	
+
 	public DataConsumer<V> getDataConsumer()
 	{
 	  return _consumer;
 	}
 
 	public abstract DataEvent<V> next();
-	
+
 	public abstract void reset();
-	
+
 	public int getBatchSize() {
 		return _batchSize;
 	}
-	
+
 	public long getEventsPerMinute() {
 	  DataThread<V> thread = _thread;
 	  if (thread==null) return 0;
 	  return thread.getEventsPerMinute();
 	}
-	
+
 	public long getMaxEventsPerMinute() {
       DataThread<V> thread = _thread;
       if (thread==null) return 0;
@@ -75,7 +75,7 @@ public abstract class StreamDataProvider<V> implements DataProvider<V>,DataProvi
       if (thread==null) return;
       thread.setMaxEventsPerMinute(maxEventsPerMinute);
 	}
-	
+
 	public String getStatus() {
       DataThread<V> thread = _thread;
       if (thread==null) return "dead";
@@ -99,7 +99,7 @@ public abstract class StreamDataProvider<V> implements DataProvider<V>,DataProvi
 	public void setBatchSize(int batchSize) {
 		_batchSize=Math.max(1, batchSize);
 	}
-	
+
 	public long getEventCount()
 	{
 	  DataThread<V> thread = _thread;
@@ -108,7 +108,7 @@ public abstract class StreamDataProvider<V> implements DataProvider<V>,DataProvi
 	  else
 	    return 0;
 	}
-	
+
 	public void stop()
 	{
 		if (_thread!=null && _thread.isAlive())
@@ -130,12 +130,12 @@ public abstract class StreamDataProvider<V> implements DataProvider<V>,DataProvi
 			_thread.start();
 		}
 	}
-	
+
 	public void syncWthVersion(long timeInMillis, long version) throws ZoieException
 	{
 	  _thread.syncWthVersion(timeInMillis, version);
 	}
-	
+
 	private static final class DataThread<V> extends Thread
 	{
 	    private Collection<DataEvent<V>> _batch;
@@ -146,13 +146,13 @@ public abstract class StreamDataProvider<V> implements DataProvider<V>,DataProvi
 		private AtomicLong _eventCount = new AtomicLong(0);
 		private volatile long _eventStart = System.nanoTime();
 		private volatile long _throttle = 40000;//Long.MAX_VALUE;
-		
+
 		private void resetEventTimer()
 		{
 		  _eventCount.set(0);
 		  _eventStart = System.nanoTime();
 		}
-		
+
 		private String getStatus()
 		{
 		  synchronized(this)
@@ -162,7 +162,7 @@ public abstract class StreamDataProvider<V> implements DataProvider<V>,DataProvi
 		    return "running";
 		  }
 		}
-		
+
     DataThread(StreamDataProvider<V> dataProvider)
 		{
 			super("Stream DataThread");
@@ -179,7 +179,7 @@ public abstract class StreamDataProvider<V> implements DataProvider<V>,DataProvi
 		  super.start();
 		  resetEventTimer();
 		}
-		
+
 		void terminate()
 		{
 			synchronized(this)
@@ -188,7 +188,7 @@ public abstract class StreamDataProvider<V> implements DataProvider<V>,DataProvi
 			   this.notifyAll();
 			}
 		}
-		
+
 		void pauseDataFeed()
 		{
 		    synchronized(this)
@@ -196,7 +196,7 @@ public abstract class StreamDataProvider<V> implements DataProvider<V>,DataProvi
 		        _paused = true;
 		    }
 		}
-		
+
 		void resumeDataFeed()
 		{
 			synchronized(this)
@@ -206,7 +206,7 @@ public abstract class StreamDataProvider<V> implements DataProvider<V>,DataProvi
 				this.notifyAll();
 			}
 		}
-		
+
 		private void flush()
 	    {
 	    	// FLUSH
@@ -227,7 +227,7 @@ public abstract class StreamDataProvider<V> implements DataProvider<V>,DataProvi
 	          log.error(e.getMessage(), e);
 	        }
 	    }
-		
+
 		public long getCurrentVersion()
 		{
 			synchronized(this)
@@ -235,7 +235,7 @@ public abstract class StreamDataProvider<V> implements DataProvider<V>,DataProvi
 		      return _currentVersion;
 			}
 		}
-		
+
 		public void syncWthVersion(long timeInMillis, long version) throws ZoieException
 		{
 		  long now = System.currentTimeMillis();
@@ -315,12 +315,12 @@ public abstract class StreamDataProvider<V> implements DataProvider<V>,DataProvi
 		  if (! ( (System.nanoTime() - _eventStart)/1000000>0) ) return 0;
 		  return _eventCount.get()*60000/((System.nanoTime() - _eventStart)/1000000);
 		}
-		
+
 		private long getMaxEventsPerMinute()
 		{
 		  return _throttle;
 		}
-		
+
         private void setMaxEventsPerMinute(long maxEventsPerMinute)
         {
           _throttle = maxEventsPerMinute;

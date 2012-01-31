@@ -55,9 +55,9 @@ import proj.zoie.mbean.ZoieSystemAdminMBean;
 public class ZoieSystem<R extends IndexReader,V> extends AsyncDataConsumer<V> implements DataConsumer<V>,IndexReaderFactory<ZoieIndexReader<R>> {
 
 	private static final Logger log = Logger.getLogger(ZoieSystem.class);
-	
+
 	private static final int DEFAULT_MAX_BATCH_SIZE = 10000;
-	
+
 	private final DirectoryManager _dirMgr;
 	private final boolean _realtimeIndexing;
 	private final SearchIndexManager<R> _searchIdxMgr;
@@ -67,12 +67,12 @@ public class ZoieSystem<R extends IndexReader,V> extends AsyncDataConsumer<V> im
 	private final Queue<IndexingEventListener> _lsnrList;
 	private final BatchedIndexDataLoader<R, V> _rtdc;
 	private final DiskLuceneIndexDataLoader<R> _diskLoader;
-	
+
 	/**
 	 * Creates a new ZoieSystem.
 	 * @param idxDir index directory, mandatory.
 	 * @param interpreter data interpreter, mandatory.
-	 * @param indexReaderDecorator index reader decorator,optional. If not specified, {@link proj.zoie.impl.indexing.DefaultIndexReaderDecorator} is used. 
+	 * @param indexReaderDecorator index reader decorator,optional. If not specified, {@link proj.zoie.impl.indexing.DefaultIndexReaderDecorator} is used.
 	 * @param analyzer Default analyzer, optional. If not specified, {@link org.apache.lucene.analysis.StandardAnalyzer} is used.
 	 * @param similarity Default similarity, optional. If not specified, {@link org.apache.lucene.search.DefaultSimilarity} is used.
 	 * @param batchSize Number of indexing events to hold before flushing to disk.
@@ -87,7 +87,7 @@ public class ZoieSystem<R extends IndexReader,V> extends AsyncDataConsumer<V> im
 	 * Creates a new ZoieSystem.
      * @param idxDir index directory, mandatory.
      * @param interpreter data interpreter, mandatory.
-     * @param indexReaderDecorator index reader decorator,optional. If not specified, {@link proj.zoie.impl.indexing.DefaultIndexReaderDecorator} is used. 
+     * @param indexReaderDecorator index reader decorator,optional. If not specified, {@link proj.zoie.impl.indexing.DefaultIndexReaderDecorator} is used.
      * @param analyzer Default analyzer, optional. If not specified, {@link org.apache.lucene.analysis.StandardAnalyzer} is used.
      * @param similarity Default similarity, optional. If not specified, {@link org.apache.lucene.search.DefaultSimilarity} is used.
      * @param batchSize Number of indexing events to hold before flushing to disk.
@@ -98,19 +98,19 @@ public class ZoieSystem<R extends IndexReader,V> extends AsyncDataConsumer<V> im
     {
 		if (dirMgr==null) throw new IllegalArgumentException("null directory manager.");
 		_dirMgr = dirMgr;
-		
+
 		if (interpreter==null) throw new IllegalArgumentException("null interpreter.");
 
 		_searchIdxMgr=new SearchIndexManager<R>(_dirMgr,indexReaderDecorator);
 		_realtimeIndexing=rtIndexing;
 		_interpreter=interpreter;
-		
+
 		_analyzer = analyzer== null ? new StandardAnalyzer(Version.LUCENE_CURRENT) : analyzer;
 		_similarity = similarity==null ? new DefaultSimilarity() : similarity;
-		
-		
+
+
 		_lsnrList = new ConcurrentLinkedQueue<IndexingEventListener>();
-		
+
 		super.setBatchSize(Math.max(1,batchSize)); // realtime memory batch size
 		_diskLoader = new DiskLuceneIndexDataLoader<R>(_analyzer, _similarity, _searchIdxMgr);
 		_diskLoader.setOptimizeScheduler(new DefaultOptimizeScheduler(getAdminMBean())); // note that the ZoieSystemAdminMBean zoieAdmin parameter for DefaultOptimizeScheduler is not used.
@@ -124,33 +124,33 @@ public class ZoieSystem<R extends IndexReader,V> extends AsyncDataConsumer<V> im
 		super.setDataConsumer(_rtdc);
 		super.setBatchSize(100); // realtime batch size
 	}
-	
+
 	public static <V> ZoieSystem<IndexReader,V> buildDefaultInstance(File idxDir,ZoieIndexableInterpreter<V> interpreter,int batchSize,long batchDelay,boolean realtime){
 		return buildDefaultInstance(idxDir, interpreter, new StandardAnalyzer(Version.LUCENE_CURRENT), new DefaultSimilarity(), batchSize, batchDelay, realtime);
 	}
-		
+
 	public static <V> ZoieSystem<IndexReader,V> buildDefaultInstance(File idxDir,ZoieIndexableInterpreter<V> interpreter,Analyzer analyzer,Similarity similarity,int batchSize,long batchDelay,boolean realtime){
 		return new ZoieSystem<IndexReader,V>(idxDir,interpreter,new DefaultIndexReaderDecorator(),analyzer,similarity,batchSize,batchDelay,realtime);
 	}
-	
+
 	public void setDocIDMapperFactory(DocIDMapperFactory docIDMapperFactory){
 		_searchIdxMgr.setDocIDMapperFactory(docIDMapperFactory);
 	}
-	
+
 	public void addIndexingEventListener(IndexingEventListener lsnr){
 		_lsnrList.add(lsnr);
 	}
-	
+
 	public OptimizeScheduler getOptimizeScheduler(){
 		return _diskLoader.getOptimizeScheduler();
 	}
-	
+
 	public void setOptimizeScheduler(OptimizeScheduler scheduler){
 		if (scheduler!=null){
 		  _diskLoader.setOptimizeScheduler(scheduler);
 		}
 	}
-	
+
 	/**
 	 * return the current disk version.
 	 */
@@ -159,28 +159,28 @@ public class ZoieSystem<R extends IndexReader,V> extends AsyncDataConsumer<V> im
 	{
 	  try{
         return getCurrentDiskVersion();
-      } 
+      }
       catch (IOException e){
         log.error(e);
       }
       return 0;
 	}
-	
+
 	public long getCurrentDiskVersion() throws IOException
 	{
 		return _dirMgr.getVersion();
 	}
-	
+
 	public Analyzer getAnalyzer()
 	{
 		return _analyzer;
 	}
-	
+
 	public Similarity getSimilarity()
 	{
 		return _similarity;
 	}
-	
+
 	public void start()
 	{
 		log.info("starting zoie...");
@@ -188,7 +188,7 @@ public class ZoieSystem<R extends IndexReader,V> extends AsyncDataConsumer<V> im
         super.start();
 		log.info("zoie started...");
 	}
-	
+
 	public void shutdown()
 	{
 		log.info("shutting down zoie...");
@@ -196,46 +196,46 @@ public class ZoieSystem<R extends IndexReader,V> extends AsyncDataConsumer<V> im
         super.stop();
     _searchIdxMgr.close();
 		log.info("zoie shutdown successfully.");
-		
+
 	}
-	
+
 	public void refreshDiskReader() throws IOException
 	{
 		_searchIdxMgr.refreshDiskReader();
 	}
 	/**
 	 * Flush the memory index into disk.
-	 * @throws ZoieException 
+	 * @throws ZoieException
 	 */
 	public void flushEvents(long timeout) throws ZoieException
 	{
 	  super.flushEvents(timeout);
 	  _rtdc.flushEvents(timeout);
 	}
-	
+
 	public boolean isReadltimeIndexing()
 	{
 		return _realtimeIndexing;
 	}
-	
+
 	public List<ZoieIndexReader<R>> getIndexReaders() throws IOException
 	{
 	  return _searchIdxMgr.getIndexReaders();
 	}
-	
+
 	public int getDiskSegmentCount() throws IOException{
 	  return _searchIdxMgr.getDiskSegmentCount();
 	}
-	
+
 	public void returnIndexReaders(List<ZoieIndexReader<R>> readers) {
 	  try{
         _searchIdxMgr.returnReaders(readers);
-      } 
+      }
 	  catch (IOException e){
 		log.error(e.getMessage(),e);
 	  }
 	}
-	
+
 	public void purgeIndex() throws IOException
 	{
 	  try
@@ -250,12 +250,12 @@ public class ZoieSystem<R extends IndexReader,V> extends AsyncDataConsumer<V> im
 
 	public int getCurrentMemBatchSize()
 	{
-	  return getCurrentBatchSize(); 
+	  return getCurrentBatchSize();
 	}
 
 	public int getCurrentDiskBatchSize()
 	{
-	  return _rtdc.getCurrentBatchSize(); 
+	  return _rtdc.getCurrentBatchSize();
 	}
 
 	public void setMaxBatchSize(int maxBatchSize) {
@@ -423,12 +423,12 @@ public class ZoieSystem<R extends IndexReader,V> extends AsyncDataConsumer<V> im
 
 	  public int getCurrentMemBatchSize()
 	  {
-	    return ZoieSystem.this.getCurrentMemBatchSize(); 
+	    return ZoieSystem.this.getCurrentMemBatchSize();
 	  }
 
 	  public int getCurrentDiskBatchSize()
 	  {
-	    return ZoieSystem.this.getCurrentDiskBatchSize(); 
+	    return ZoieSystem.this.getCurrentDiskBatchSize();
 	  }
 	}
 }

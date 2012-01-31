@@ -30,7 +30,7 @@ public class IndexingThread extends Thread
       log.error(thread.getName() + " is abruptly terminated", t);
     }
   };
-  
+
   public IndexingThread(String name)
   {
     super(name);

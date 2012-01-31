@@ -10,7 +10,7 @@ public class ZoieTestCase extends TestCase
     String confdir = System.getProperty("conf.dir");
     org.apache.log4j.PropertyConfigurator.configure(confdir+"/log4j.properties");
   }
-  
+
   ZoieTestCase(String name)
   {
     super(name);

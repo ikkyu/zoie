@@ -14,7 +14,7 @@ public class ChannelUtil
     buf.rewind();
     return channel.write(buf);
   }
-  
+
   public static long writeLong(WritableByteChannel channel, long val) throws IOException
   {
     ByteBuffer buf = ByteBuffer.allocate(8);
@@ -22,7 +22,7 @@ public class ChannelUtil
     buf.rewind();
     return channel.write(buf);
   }
-  
+
   public static long writeString(WritableByteChannel channel, String val) throws IOException
   {
     int len = val.length();
@@ -35,7 +35,7 @@ public class ChannelUtil
     buf.rewind();
     return channel.write(buf);
   }
-  
+
   public static int readInt(ReadableByteChannel channel) throws IOException
   {
     ByteBuffer buf = ByteBuffer.allocate(4);
@@ -46,7 +46,7 @@ public class ChannelUtil
     }
     return -1;
   }
-  
+
   public static long readLong(ReadableByteChannel channel) throws IOException
   {
     ByteBuffer buf = ByteBuffer.allocate(8);
@@ -57,12 +57,12 @@ public class ChannelUtil
     }
     return -1L;
   }
-  
+
   public static String readString(ReadableByteChannel channel) throws IOException
   {
     int nameLen = readInt(channel); // name length
     if(nameLen < 0) return null;
-    
+
     ByteBuffer buf = ByteBuffer.allocate(nameLen * 2);
     if(fillBuffer(channel, buf, true))
     {
@@ -76,11 +76,11 @@ public class ChannelUtil
     }
     return null;
   }
-  
+
   public static boolean fillBuffer(ReadableByteChannel channel, ByteBuffer buf, boolean clear) throws IOException
   {
     if(clear) buf.clear();
-    
+
     while(true)
     {
       int cnt = channel.read(buf);

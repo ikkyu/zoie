@@ -13,23 +13,23 @@ public class TestDataInterpreter implements ZoieIndexableInterpreter<String> {
 
     long _delay;
     final Analyzer _analyzer;
-    
+
     public TestDataInterpreter()
     {
       this(0,null);
     }
-    
+
     public TestDataInterpreter(long delay)
     {
       this(delay,null);
     }
-    
+
     public TestDataInterpreter(long delay,Analyzer analyzer)
     {
       _delay = delay;
       _analyzer = analyzer;
     }
-    
+
 	public ZoieIndexable interpret(final String src) {
 		String[] parts=src.split(" ");
 		final long id=Long.parseLong(parts[parts.length-1])+((long)(Integer.MAX_VALUE)*2L);
@@ -47,11 +47,11 @@ public class TestDataInterpreter implements ZoieIndexableInterpreter<String> {
                 }
                 return doc;
 			}
-			
+
 			public IndexingReq[] buildIndexingReqs(){
 				return new IndexingReq[]{new IndexingReq(buildDocument(),getAnalyzer())};
 			}
-			
+
 			public Analyzer getAnalyzer(){
 				return id%2 == 0 ? null : _analyzer;
 			}

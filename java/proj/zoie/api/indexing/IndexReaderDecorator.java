@@ -33,7 +33,7 @@ public interface IndexReaderDecorator<R extends IndexReader>
 	 * @throws IOException
 	 */
 	R decorate(ZoieIndexReader<R> indexReader) throws IOException;
-	
+
 	/**
 	 * This is called when the actual underlysing reader was not changed, but a new reference was created. Normally only the internal
 	 * reference to the source reader needs to be set.

@@ -20,7 +20,7 @@ import proj.zoie.impl.indexing.IndexingEventListener.IndexingEvent;
 public final class IndexUpdatedEvent extends IndexingEvent {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -28,7 +28,7 @@ public final class IndexUpdatedEvent extends IndexingEvent {
 	private final long _startIndexingTime;
 	private final long _endIndexingTime;
 	private final int _numDocsLeftInQueue;
-	
+
 	public IndexUpdatedEvent(int numDocsIndexed,long startIndexingTime,long endIndexingTime,int numDocsLeftInQueue){
 		_numDocsIndexed = numDocsIndexed;
 		_startIndexingTime = startIndexingTime;

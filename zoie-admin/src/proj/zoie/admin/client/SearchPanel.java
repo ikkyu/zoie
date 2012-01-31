@@ -31,17 +31,17 @@ public class SearchPanel extends Composite {
   private final SearchServiceAsync _searchSvc;
 
   private Document doc = Document.get();
-	  
+
   @UiField Button searchButton;
   @UiField TextBox queryInput;
   @UiField SpanElement hitcountLabel;
   @UiField SpanElement searchtimeLabel;
   @UiField TableElement resultTable;
-  
+
   public SearchPanel(SearchServiceAsync searchSvc){
 	  _searchSvc = searchSvc;
 	  initWidget(uiBinder.createAndBindUi(this));
-	  
+
 	  class MyHandler implements ClickHandler, KeyUpHandler {
 
 	        public void onClick(ClickEvent event) {
@@ -55,7 +55,7 @@ public class SearchPanel extends Composite {
 	        }
 
 	        private void doSearch() {
-	          String query = queryInput.getValue(); 
+	          String query = queryInput.getValue();
 	          SearchRequest req = new SearchRequest();
 	          req.setQuery(query);
 	          _searchSvc.search(req, new AsyncCallback<SearchResult>(){
@@ -64,13 +64,13 @@ public class SearchPanel extends Composite {
 	  				hitcountLabel.setInnerHTML("<b>0/0</b>");
 	  				searchtimeLabel.setInnerHTML("<b>0</b>");
 	  			}
-	  			
+
 	  			private void removeAllResults(Element elem){
 	  				while (elem.getChildCount()>0){
 	  					elem.removeChild(elem.getFirstChild());
 	  				}
 	  			}
-	  			
+
 	  			private void renderDoc(SearchHit doc,Element elem){
 	  				Map<String,String[]> fields = doc.getFields();
 	  				String path = fields.get("path")[0];
@@ -83,12 +83,12 @@ public class SearchPanel extends Composite {
 	  				else{
 	  					name = path.substring(idx+1);
 	  				}
-	  				
+
 	  				String nameStr="<a class=\"hitlink\" href=\"file:///"+path+"\">"+name+"</a>";
 	  				String fragStr="<div class=\"frag\">"+frag+"</div>";
 	  				String pathStr="<span class=\"path\">"+path+"</span>";
 	  				String scoreStr="<span class=\"score\">score: "+doc.getScore()+"</span>";
-	  				
+
 	  				elem.setInnerHTML(nameStr+fragStr+"<div>"+pathStr+" - "+scoreStr+"</div>");
 	  			}
 
@@ -99,7 +99,7 @@ public class SearchPanel extends Composite {
 	  				StringBuilder buf2 = new StringBuilder();
 	  				buf2.append("<b>").append(String.valueOf(res.getTime())).append("</b>");
 	  				searchtimeLabel.setInnerHTML(buf2.toString());
-	  				
+
 	  				// populate table elements
 	  				removeAllResults(resultTable);
 	  				SearchHit[] hits = res.getHits();
@@ -112,15 +112,15 @@ public class SearchPanel extends Composite {
 	  					renderDoc(hit,col);
 	  				}
 	  			}
-	          	
+
 	          });
 	        }
 	      }
-	 
+
 
       hitcountLabel.setInnerHTML("<b>0/0</b>");
 	  searchtimeLabel.setInnerHTML("<b>0</b>");
-	  
+
 	// Add a handler to send the name to the server
       MyHandler handler = new MyHandler();
       searchButton.addClickHandler(handler);

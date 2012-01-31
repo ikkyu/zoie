@@ -30,7 +30,7 @@ import proj.zoie.api.indexing.AbstractZoieIndexable;
 import proj.zoie.api.indexing.ZoieIndexable;
 import proj.zoie.api.indexing.ZoieIndexableInterpreter;
 
-public class FileIndexableInterpreter implements ZoieIndexableInterpreter<File> 
+public class FileIndexableInterpreter implements ZoieIndexableInterpreter<File>
 {
 	protected static int id = 0;
 	private static final Logger log = Logger.getLogger(FileIndexableInterpreter.class);
@@ -45,13 +45,13 @@ public class FileIndexableInterpreter implements ZoieIndexableInterpreter<File>
 			_file=file;
 			_uid = uid;
 		}
-		
+
 		public IndexingReq[] buildIndexingReqs(){
 			IndexingReq req = new IndexingReq(buildDocument(),null);
 			return new IndexingReq[]{req};
 		}
-		
-		public Document buildDocument() 
+
+		public Document buildDocument()
 		{
 			Document doc=new Document();
 			doc.add(new Field("foo","bar",Store.NO,Index.NOT_ANALYZED_NO_NORMS));
@@ -109,23 +109,23 @@ public class FileIndexableInterpreter implements ZoieIndexableInterpreter<File>
 			sb.setLength(0);
 			return doc;
 		}
-		
+
 		public boolean isSkip()
 		{
 			return false;
 		}
-		
+
 		public boolean isDeleted()
 		{
 			return false;
 		}
 
-		public long getUID() 
+		public long getUID()
 		{
 			return _uid;
 		}
 	}
-	
+
 	public ZoieIndexable convertAndInterpret(File src) {
 		ZoieIndexable idxable = new FileIndexable(src, id);
 		id++;

@@ -47,9 +47,9 @@ public class EnwikiContentSource extends ContentSource {
 	private ThreadLocal<SimpleDateFormat> _formatter = new ThreadLocal<SimpleDateFormat>() {
 	      protected SimpleDateFormat initialValue() {
 	    	  return new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss.SSS");
-		      }   
+		      }
 		    };
-	
+
   private class Parser extends DefaultHandler implements Runnable {
     private Thread t;
     private boolean threadDone;
@@ -60,7 +60,7 @@ public class EnwikiContentSource extends ContentSource {
     private String body;
     private String time;
     private String id;
-    
+
     String[] next() throws EOFException {
       if (t == null) {
         threadDone = false;
@@ -95,7 +95,7 @@ public class EnwikiContentSource extends ContentSource {
       }
       return result;
     }
-    
+
     String time(String original) {
       StringBuffer buffer = new StringBuffer();
 
@@ -110,7 +110,7 @@ public class EnwikiContentSource extends ContentSource {
 
       return buffer.toString();
     }
-    
+
     public void characters(char[] ch, int start, int length) {
       contents.append(ch, start, length);
     }
@@ -249,7 +249,7 @@ public class EnwikiContentSource extends ContentSource {
     ELEMENTS.put("title", Integer.valueOf(TITLE));
     ELEMENTS.put("id", Integer.valueOf(ID));
   }
-  
+
   /**
    * Returns the type of the element if defined, otherwise returns -1. This
    * method is useful in startElement and endElement, by not needing to compare
@@ -259,17 +259,17 @@ public class EnwikiContentSource extends ContentSource {
     Integer val = (Integer) ELEMENTS.get(elem);
     return val == null ? -1 : val.intValue();
   }
-  
+
   private File file;
   private boolean keepImages = false;
   private InputStream is;
   private Parser parser = new Parser();
-  
+
   public EnwikiContentSource(File file) throws IOException{
 	  this.file=file;
 	  resetInputs();
   }
-  
+
   public void close() throws IOException {
     synchronized (EnwikiContentSource.this) {
       if (is != null) {
@@ -278,7 +278,7 @@ public class EnwikiContentSource extends ContentSource {
       }
     }
   }
-  
+
   public ContentDoc getNextDocData(ContentDoc docData) throws EOFException, IOException {
     String[] tuple = parser.next();
     docData.clear();
@@ -297,7 +297,7 @@ public class EnwikiContentSource extends ContentSource {
     super.resetInputs();
     is = getInputStream(file);
   }
-  
+
   public static void main(String[] args) throws Exception{
 	File f = new File("/Users/john/dataset/enwiki-20091026-pages-articles.xml");
 	EnwikiContentSource wikiSrc = new EnwikiContentSource(f);

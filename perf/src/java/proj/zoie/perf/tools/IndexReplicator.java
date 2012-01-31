@@ -48,7 +48,7 @@ public class IndexReplicator {
 		DirectoryManager targetDirMgr = new DefaultDirectoryManager(targetIndex);
 
 		Directory targetDir = targetDirMgr.getDirectory(true);
-		
+
 		IndexWriter writer = null;
 		try
 		{
@@ -69,7 +69,7 @@ public class IndexReplicator {
 				writer.close();
 			}
 		}
-	
+
 		try
 		{
 			reader=IndexReader.open(targetDir,true);

@@ -13,7 +13,7 @@ public class TestData {
 		"zoie odd 8",
 		"zoie even 9"
 	};
-	
+
 	public static String[] testdata2=new String[]{
 		"zoie2 odd 0",
 		"zoie2 even 1",

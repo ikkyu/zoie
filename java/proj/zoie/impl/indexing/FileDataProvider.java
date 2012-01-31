@@ -29,7 +29,7 @@ public class FileDataProvider extends StreamDataProvider<File>
 	private Stack<Iterator<File>> _stack;
 	private Iterator<File> _currentIterator;
 	private boolean _looping;
-	
+
 	public FileDataProvider(File dir)
 	{
 		super();
@@ -40,7 +40,7 @@ public class FileDataProvider extends StreamDataProvider<File>
 		_looping = false;
 		reset();
 	}
-	
+
 	public File getDir()
 	{
 		return _dir;
@@ -59,11 +59,11 @@ public class FileDataProvider extends StreamDataProvider<File>
 			_currentIterator=Arrays.asList(_dir.listFiles()).iterator();
 		}
 	}
-	
+
 	public void setLooping(boolean looping){
 		_looping = looping;
 	}
-	
+
 	@Override
 	public DataEvent<File> next() {
 		if(_currentIterator.hasNext())

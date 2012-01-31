@@ -9,7 +9,7 @@
   	    	<table>
   	    	  <tr>
   	    	    <td>
-  	    	      Server: 
+  	    	      Server:
   	    	    </td>
   	    	    <td>
   	    	      <g:Label ui:field='serverLabel' />

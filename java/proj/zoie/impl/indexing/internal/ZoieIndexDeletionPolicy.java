@@ -32,7 +32,7 @@ public class ZoieIndexDeletionPolicy implements IndexDeletionPolicy
 {
   private IndexCommit _lastCommit;
   private HashMap<String,Snapshot> _currentSnapshots = new HashMap<String,Snapshot>();
-  
+
   public ZoieIndexDeletionPolicy()
   {
     _lastCommit = null;
@@ -47,12 +47,12 @@ public class ZoieIndexDeletionPolicy implements IndexDeletionPolicy
   {
     processCommits(commits);
   }
-  
+
   private synchronized void processCommits(List commits)
   {
     int size = commits.size();
     if(size == 0) return;
-    
+
     IndexCommit indexCommit = null;
     for(Object commit : commits)
     {
@@ -64,11 +64,11 @@ public class ZoieIndexDeletionPolicy implements IndexDeletionPolicy
     }
     _lastCommit = indexCommit;
   }
-  
+
   public synchronized Snapshot getSnapshot()
   {
     if(_lastCommit == null) return null; // no commit yet
-    
+
     Snapshot snapshot;
     synchronized(_currentSnapshots)
     {
@@ -91,28 +91,28 @@ public class ZoieIndexDeletionPolicy implements IndexDeletionPolicy
   {
     private final IndexCommit _commit;
     private int _refcount;
-    
+
     public Snapshot(IndexCommit commit)
     {
       _commit = commit;
       _refcount = 1;
     }
-    
+
     public Collection<String> getFileNames() throws IOException
     {
       return (Collection<String>)_commit.getFileNames();
     }
-    
+
     public void close()
     {
       decRef();
     }
-    
+
     private synchronized void incRef()
     {
       _refcount++;
     }
-    
+
     private synchronized void decRef()
     {
       if(--_refcount <= 0)
@@ -121,9 +121,9 @@ public class ZoieIndexDeletionPolicy implements IndexDeletionPolicy
         {
           _currentSnapshots.remove(_commit.getSegmentsFileName());
         }
-      }      
+      }
     }
-    
+
     public void finalize()
     {
       _refcount = 0;

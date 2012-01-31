@@ -36,39 +36,39 @@ public class DiskIndexSnapshot
   private DirectoryManager _dirMgr;
   private IndexSignature _sig;
   private Snapshot _snapshot;
-  
+
   public DiskIndexSnapshot(DirectoryManager dirMgr, IndexSignature sig, Snapshot snapshot)
   {
     _dirMgr = dirMgr;
     _sig = sig;
     _snapshot = snapshot;
   }
-  
+
   public void close()
   {
     _snapshot.close();
   }
-  
+
   public DirectoryManager getDirecotryManager()
   {
     return  _dirMgr;
   }
-  
+
   public long writeTo(WritableByteChannel channel) throws IOException
   {
     // format:
     //   <format_version> <sig_len> <sig_data> { <idx_file_name_len> <idx_file_name> <idx_file_len> <idx_file_data> }...
-    
+
     long amount = 0;
-    
+
     // format version
     amount += ChannelUtil.writeInt(channel, 1);
-    
+
     // index signature
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     _sig.save(baos);
     byte[] sigBytes = baos.toByteArray();
-    
+
     amount += ChannelUtil.writeLong(channel, (long)sigBytes.length); // data length
     amount += channel.write(ByteBuffer.wrap(sigBytes)); // data
 
@@ -82,7 +82,7 @@ public class DiskIndexSnapshot
     }
     return amount;
   }
-  
+
   public static void readSnapshot(ReadableByteChannel channel, DirectoryManager dirMgr) throws IOException
   {
     // format version
@@ -91,7 +91,7 @@ public class DiskIndexSnapshot
     {
       throw new IOException("snapshot format version mismatch [" + formatVersion + "]");
     }
-    
+
     // index signature
     if(!dirMgr.transferFromChannelToFile(channel, DirectoryManager.INDEX_DIRECTORY))
     {
@@ -102,7 +102,7 @@ public class DiskIndexSnapshot
     int numFiles = ChannelUtil.readInt(channel); // number of files
     if(numFiles < 0)
     {
-      throw new IOException("bad snapshot file");      
+      throw new IOException("bad snapshot file");
     }
     while(numFiles-- > 0)
     {

@@ -24,13 +24,13 @@ import org.apache.lucene.document.DateTools;
 
 /** Output of parsing (e.g. HTML parsing) of an input document. */
 public class ContentDoc {
-  
+
   private long id;
   private String body;
   private String title;
   private Date date;
   private Properties props;
-  
+
   public void clear() {
     id = Long.MIN_VALUE;
     body = null;
@@ -38,7 +38,7 @@ public class ContentDoc {
     date = null;
     props = null;
   }
-  
+
   public String getBody() {
     return body;
   }
@@ -84,7 +84,7 @@ public class ContentDoc {
   public void setTitle(String title) {
     this.title = title;
   }
-  
+
   @Override
   public String toString(){
 	StringBuffer buf = new StringBuffer();

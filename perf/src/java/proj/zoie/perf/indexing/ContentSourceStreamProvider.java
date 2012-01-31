@@ -13,16 +13,16 @@ public class ContentSourceStreamProvider extends StreamDataProvider<ContentDoc> 
 	private ContentSource _contentSource;
 	private long _version;
 	private boolean _looping;
-	
+
 	public ContentSourceStreamProvider(ContentSource contentSource){
 		_contentSource = contentSource;
 		_version = 0L;
 	}
-	
+
 	public void setLooping(boolean looping){
 		_looping = looping;
 	}
-	
+
 	@Override
 	public DataEvent<ContentDoc> next(){
 		DataEvent<ContentDoc> event = next();
@@ -39,7 +39,7 @@ public class ContentSourceStreamProvider extends StreamDataProvider<ContentDoc> 
 		try{
 			dataNode = new ContentDoc();
 			dataNode = _contentSource.getNextDocData(dataNode);
-			
+
 			// for the purpose of perf test, ID's are normalized to version
 			dataNode.setID(_version);
 			if (dataNode == null) return null;
@@ -49,7 +49,7 @@ public class ContentSourceStreamProvider extends StreamDataProvider<ContentDoc> 
 		} catch (IOException e) {
 			log.error(e.getMessage(),e);
 		}
-		
+
 		DataEvent<ContentDoc> event = new DataEvent<ContentDoc>(_version++,dataNode);
 		return event;
 	}

@@ -40,12 +40,12 @@ public class ZoieMultiReader<R extends IndexReader> extends ZoieIndexReader<R>
 	private ArrayList<ZoieSegmentReader<R>> _subZoieReaders;
 	private int[] _starts;
 	private List<R> _decoratedReaders;
-	
+
 	public ZoieMultiReader(IndexReader in,IndexReaderDecorator<R> decorator) throws IOException
 	{
 	  super(in,decorator);
 	  _readerMap = new HashMap<String,ZoieSegmentReader<R>>();
-	  _decoratedReaders = null; 
+	  _decoratedReaders = null;
 	  IndexReader[] subReaders = in.getSequentialSubReaders();
 	  init(subReaders);
 	}
@@ -53,14 +53,14 @@ public class ZoieMultiReader<R extends IndexReader> extends ZoieIndexReader<R>
 	public ZoieMultiReader(IndexReader in,IndexReader[] subReaders,IndexReaderDecorator<R> decorator) throws IOException {
 		super(in,decorator);
 		_readerMap = new HashMap<String,ZoieSegmentReader<R>>();
-		_decoratedReaders = null; 
+		_decoratedReaders = null;
 		init(subReaders);
 	}
-	
+
 	public int[] getStarts(){
 		return _starts;
 	}
-	
+
 	private void init(IndexReader[] subReaders) throws IOException{
 		_subZoieReaders = new ArrayList<ZoieSegmentReader<R>>(subReaders.length);
 		_starts = new int[subReaders.length+1];
@@ -88,7 +88,7 @@ public class ZoieMultiReader<R extends IndexReader> extends ZoieIndexReader<R>
 			}
 		}
 		_starts[subReaders.length]=in.maxDoc();
-		
+
 		ArrayList<R> decoratedList = new ArrayList<R>(_subZoieReaders.size());
     	for (ZoieSegmentReader<R> subReader : _subZoieReaders){
     		R decoratedReader = subReader.getDecoratedReader();
@@ -96,7 +96,7 @@ public class ZoieMultiReader<R extends IndexReader> extends ZoieIndexReader<R>
     	}
     	_decoratedReaders = decoratedList;
 	}
-	
+
 	@Override
 	public long getUID(int docid)
 	{
@@ -104,14 +104,14 @@ public class ZoieMultiReader<R extends IndexReader> extends ZoieIndexReader<R>
 		ZoieIndexReader<R> subReader = _subZoieReaders.get(idx);
 		return subReader.getUID(docid-_starts[idx]);
 	}
-	
+
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public ZoieIndexReader<R>[] getSequentialSubReaders() {
 		return (ZoieIndexReader<R>[])(_subZoieReaders.toArray(new ZoieSegmentReader[_subZoieReaders.size()]));
 	}
-	
+
 	@Override
 	public void markDeletes(LongSet delDocs, LongSet deletedUIDs)
 	{
@@ -125,7 +125,7 @@ public class ZoieMultiReader<R extends IndexReader> extends ZoieIndexReader<R>
         }
       }
 	}
-	
+
 	@Override
 	public void commitDeletes()
 	{
@@ -139,7 +139,7 @@ public class ZoieMultiReader<R extends IndexReader> extends ZoieIndexReader<R>
 	    }
 	  }
 	}
-	
+
 	@Override
 	public void setDelDocIds()
 	{
@@ -154,7 +154,7 @@ public class ZoieMultiReader<R extends IndexReader> extends ZoieIndexReader<R>
 	public List<R> getDecoratedReaders() throws IOException{
 	      return _decoratedReaders;
 	}
-	
+
 	@Override
 	protected boolean hasIndexDeletions(){
 		for (ZoieSegmentReader<R> subReader : _subZoieReaders){
@@ -162,18 +162,18 @@ public class ZoieMultiReader<R extends IndexReader> extends ZoieIndexReader<R>
 		}
 		return false;
 	}
-	
+
 	@Override
 	public boolean isDeleted(int docid){
 	   int idx = readerIndex(docid);
 	   ZoieIndexReader<R> subReader = _subZoieReaders.get(idx);
 	   return subReader.isDeleted(docid-_starts[idx]);
 	}
-	
+
 	private int readerIndex(int n){
 		return readerIndex(n,_starts,_starts.length);
 	}
-	
+
 	final static int readerIndex(int n, int[] starts, int numSubReaders) {    // find reader for doc n:
 	    int lo = 0;                                      // search starts array
 	    int hi = numSubReaders - 1;                  // for first element less
@@ -205,7 +205,7 @@ public class ZoieMultiReader<R extends IndexReader> extends ZoieIndexReader<R>
 		return new MultiZoieTermPositions(this,_subZoieReaders.toArray(new ZoieIndexReader<?>[_subZoieReaders.size()]),_starts);
 	}
 
-	
+
 	@Override
 	protected void doClose() throws IOException {
 	  try{
@@ -249,7 +249,7 @@ public class ZoieMultiReader<R extends IndexReader> extends ZoieIndexReader<R>
 		if (inner == in && inner.getVersion()==version){
 			return this;
 		}
-		
+
 		IndexReader[] subReaders = inner.getSequentialSubReaders();
 		ArrayList<IndexReader> subReaderList = new ArrayList<IndexReader>(subReaders.length);
 		for (IndexReader subReader : subReaders){
@@ -277,10 +277,10 @@ public class ZoieMultiReader<R extends IndexReader> extends ZoieIndexReader<R>
 				throw new IllegalStateException("reader not insance of "+SegmentReader.class);
 			}
 		}
-		
+
 		return newInstance(inner, subReaderList.toArray(new IndexReader[subReaderList.size()]));
 	}
-	
+
 	protected ZoieMultiReader<R> newInstance(IndexReader inner,IndexReader[] subReaders) throws IOException{
 		return new ZoieMultiReader<R>(inner, subReaders ,_decorator);
 	}

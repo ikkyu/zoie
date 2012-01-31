@@ -12,9 +12,9 @@
   <property name="packconf" value="${packbasedir}/conf" />
   <property name="packresource" value="${packbasedir}/resource" />
   <property name="packsettings" value="${packbasedir}/settings" />
-  
+
   <property name="build" value="build"/>
-    
+
   <path id="compile.class.path">
       <fileset dir="${lib}">
         <include name="*.jar" />
@@ -30,22 +30,22 @@
   	        <include name="*/**/*.jar" />
   	      </fileset>
   </path>
-    
+
   <target name="clean">
     <delete dir="${build}"/>
   </target>
-    
+
   <target name="init">
     <mkdir dir="${build}"/>
   </target>
-    
+
   <target name="compile" depends="init">
     <javac debug="true" destdir="${build}">
       <src path="${test-perf.src}"/>
       <classpath refid="compile.class.path"/>
     </javac>
   </target>
-  
+
   <target name="dist" depends="compile">
   	<jar destfile="${dist}/performance-zoie-${version}.jar"  basedir="${build}" />
   	<copy todir="${packlib}">

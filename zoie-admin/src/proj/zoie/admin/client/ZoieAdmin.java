@@ -26,7 +26,7 @@ public class ZoieAdmin implements EntryPoint {
 
   private final SearchServiceAsync searchService = GWT.create(SearchService.class);
   private final JMXAdminServiceAsync jmxService = GWT.create(JMXAdminService.class);
-  
+
   /**
    * This is the entry point method.
    */
@@ -37,15 +37,15 @@ public class ZoieAdmin implements EntryPoint {
 
     // We can add style names to widgets
     sendButton.addStyleName("sendButton");
-    
+
     TabPanel topTab = new TabPanel();
     topTab.setWidth("100%");
     topTab.setHeight("100%");
     topTab.setAnimationEnabled(true);
-    
+
     topTab.add(new OverviewPanel(jmxService), "Overview");
     topTab.add(new SearchPanel(searchService),"Search");
-    
+
     topTab.selectTab(0);
     RootPanel.get("toptab").add(topTab);
   }

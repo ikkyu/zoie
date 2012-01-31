@@ -31,14 +31,14 @@ public class DelegateIndexDataConsumer<V> implements DataConsumer<V> {
 	private final DataConsumer<ZoieIndexable> _diskConsumer;
 	private final DataConsumer<ZoieIndexable> _ramConsumer;
 	private final ZoieIndexableInterpreter<V> _interpreter;
-	
+
 	public DelegateIndexDataConsumer(DataConsumer<ZoieIndexable> diskConsumer,DataConsumer<ZoieIndexable> ramConsumer,ZoieIndexableInterpreter<V> interpreter)
 	{
 	  	_diskConsumer=diskConsumer;
 	  	_ramConsumer=ramConsumer;
 	  	_interpreter=interpreter;
 	}
-	
+
 	public void consume(Collection<DataEvent<V>> data)
 			throws ZoieException {
 		if (data!=null)
@@ -51,7 +51,7 @@ public class DelegateIndexDataConsumer<V> implements DataConsumer<V> {
 			  try{
 			    DataEvent<V> event=iter.next();
 			    ZoieIndexable indexable = ((ZoieIndexableInterpreter<V>)_interpreter).convertAndInterpret(event.getData());
-			   
+
 			    DataEvent<ZoieIndexable> newEvent=new DataEvent<ZoieIndexable>(event.getVersion(),indexable);
 			    indexableList.add(newEvent);
 			  }
@@ -59,7 +59,7 @@ public class DelegateIndexDataConsumer<V> implements DataConsumer<V> {
 				log.error(e.getMessage(),e);
 			  }
 		  }
-		  
+
 		  if(_diskConsumer != null)
 		  {
 		    synchronized(_diskConsumer) // this blocks the batch disk loader thread while indexing to RAM
@@ -81,7 +81,7 @@ public class DelegateIndexDataConsumer<V> implements DataConsumer<V> {
 		  }
 		}
 	}
-  
+
   public long getVersion()
   {
     throw new UnsupportedOperationException();

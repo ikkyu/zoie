@@ -17,7 +17,7 @@ public class DefaultDocIDMapperFactory implements DocIDMapperFactory {
 			}
 			subReader.setDocIDMapper(mapper);
 		}
-		
+
 		return new DocIDMapper() {
 			// do the samething as DefaultDocIDMapperFactory since range does not really matter here
 			public int getDocID(long uid) {
@@ -32,7 +32,7 @@ public class DefaultDocIDMapperFactory implements DocIDMapperFactory {
 				return DocIDMapper.NOT_FOUND;
 			}
 		};
-		
+
 	}
 
 }

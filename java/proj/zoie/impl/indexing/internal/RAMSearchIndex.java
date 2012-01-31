@@ -38,10 +38,10 @@ public class RAMSearchIndex<R extends IndexReader> extends BaseSearchIndex<R> {
 	  private long         _version;
 	  private final RAMDirectory _directory;
 	  private final IndexReaderDecorator<R> _decorator;
-	  
+
 	  // a consistent pair of reader and deleted set
       private volatile ZoieIndexReader<R> _currentReader;
-	  
+
 	  public static final Logger log = Logger.getLogger(RAMSearchIndex.class);
 
 	  RAMSearchIndex(long version, IndexReaderDecorator<R> decorator,SearchIndexManager<R> idxMgr){
@@ -54,7 +54,7 @@ public class RAMSearchIndex<R extends IndexReader> extends BaseSearchIndex<R> {
 //	    cms.setMaxThreadCount(1);
 	    _mergeScheduler = new SerialMergeScheduler();
 	  }
-	  
+
 	  public void close()
 	  {
 	    super.close();
@@ -63,7 +63,7 @@ public class RAMSearchIndex<R extends IndexReader> extends BaseSearchIndex<R> {
 	      _directory.close();
 	    }
 	  }
-	  
+
 	  public long getVersion()
 	  {
 	    return _version;
@@ -86,7 +86,7 @@ public class RAMSearchIndex<R extends IndexReader> extends BaseSearchIndex<R> {
 	    {
 	      log.error(e.getMessage(),e);
 	    }
-	    
+
 	    if (reader!=null)
 	    {
 	      return reader.numDocs();
@@ -96,13 +96,13 @@ public class RAMSearchIndex<R extends IndexReader> extends BaseSearchIndex<R> {
 	      return 0;
 	    }
 	  }
-	  
+
 	  @Override
 	  public ZoieIndexReader<R> openIndexReader() throws IOException
 	  {
 	    return _currentReader;
 	  }
-      
+
 	  @Override
 	  protected IndexReader openIndexReaderForDelete() throws IOException {
 		if (IndexReader.indexExists(_directory)){
@@ -112,7 +112,7 @@ public class RAMSearchIndex<R extends IndexReader> extends BaseSearchIndex<R> {
 			return null;
 		}
 	  }
-	  
+
       private ZoieIndexReader<R> openIndexReaderInternal() throws IOException
       {
 	    if (IndexReader.indexExists(_directory))
@@ -147,15 +147,15 @@ public class RAMSearchIndex<R extends IndexReader> extends BaseSearchIndex<R> {
 	    throws IOException
 	  {
 	    if(_indexWriter != null) return _indexWriter;
-	    
+
 	    // if index does not exist, create empty index
-	    boolean create = !IndexReader.indexExists(_directory); 
-	    IndexWriter idxWriter = new IndexWriter(_directory, analyzer, create, MaxFieldLength.UNLIMITED); 
+	    boolean create = !IndexReader.indexExists(_directory);
+	    IndexWriter idxWriter = new IndexWriter(_directory, analyzer, create, MaxFieldLength.UNLIMITED);
 	    // TODO disable compound file for RAMDirecory when lucene bug is fixed
 	    idxWriter.setUseCompoundFile(false);
 	    idxWriter.setMergeScheduler(_mergeScheduler);
 	    idxWriter.setRAMBufferSizeMB(3);
-	    
+
 	    if (similarity != null)
 	    {
 	      idxWriter.setSimilarity(similarity);
@@ -163,7 +163,7 @@ public class RAMSearchIndex<R extends IndexReader> extends BaseSearchIndex<R> {
 	    _indexWriter = idxWriter;
 	    return idxWriter;
 	  }
-	  
+
 	  @Override
 	  public void refresh() throws IOException
 	  {
@@ -180,7 +180,7 @@ public class RAMSearchIndex<R extends IndexReader> extends BaseSearchIndex<R> {
 	        DocIDMapper mapper = _idxMgr._docIDMapperFactory.getDocIDMapper((ZoieMultiReader<R>)reader);
 	        reader.setDocIDMapper(mapper);
 	      }
-	      
+
 	      _currentReader = reader;
 	      LongSet delDocs = _delDocs;
           clearDeletes();

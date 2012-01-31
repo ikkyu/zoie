@@ -2,13 +2,13 @@
 		<property name="zoie.root" location="../" />
         <property name="lib.master" value="${zoie.root}/lib/master"/>
         <property name="lib.solr" value="${zoie.root}/lib/solr"/>
-    	
+
 		<property name="src.dir" value="src"/>
         <property name="build" value="build"/>
     	<property name="xml" value="xml"/>
 	    <property name="dist" value="${zoie.root}/dist"/>
-	  
-		
+
+
         <path id="project.class.path">
         	<fileset dir="${lib.master}">
                 <include name="*.jar"/>
@@ -29,13 +29,13 @@
                 <mkdir dir="${build}"/>
         </target>
 
-        <target name="compile" depends="init">                
+        <target name="compile" depends="init">
                 <javac destdir="${build}">
                     <src path="${src.dir}"/>
                     <classpath refid="project.class.path"/>
                 </javac>
         </target>
-	
+
         <target name="dist" depends="compile">
 			<jar destfile="${dist}/zoie-solr-${version}.jar"  basedir="${build}" />
         </target>

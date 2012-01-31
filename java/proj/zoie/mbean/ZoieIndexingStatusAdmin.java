@@ -29,7 +29,7 @@ public class ZoieIndexingStatusAdmin implements ZoieIndexingStatusAdminMBean,Ind
 	private int _size;
 	private long _totalTime;
 	private int _totalSize;
-	
+
 	public ZoieIndexingStatusAdmin(ZoieSystem<?,?> zoieSystem){
 		_zoieSystem = zoieSystem;
 		_zoieSystem.addIndexingEventListener(this);
@@ -40,7 +40,7 @@ public class ZoieIndexingStatusAdmin implements ZoieIndexingStatusAdminMBean,Ind
 		_totalSize = 0;
 		_totalTime = 0;
 	}
-	
+
 	public long getAverageIndexingBatchDuration() {
 		return _totalSize == 0 ? 0 : _totalTime/_totalSize;
 	}
@@ -76,6 +76,6 @@ public class ZoieIndexingStatusAdmin implements ZoieIndexingStatusAdminMBean,Ind
 			_size = updateEvt.getNumDocsIndexed();
 			_totalSize += _size;
 			_totalTime += (_endTime - _startTime);
-		}	
+		}
 	}
 }

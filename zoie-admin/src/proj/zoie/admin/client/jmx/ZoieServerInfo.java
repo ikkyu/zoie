@@ -9,7 +9,7 @@ public class ZoieServerInfo implements Serializable, IsSerializable
 {
 
   /**
-   * 
+   *
    */
   private static final long serialVersionUID = 1L;
 

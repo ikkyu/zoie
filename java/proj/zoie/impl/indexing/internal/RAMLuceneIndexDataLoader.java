@@ -42,14 +42,14 @@ public class RAMLuceneIndexDataLoader<R extends IndexReader> extends LuceneIndex
 	  {
 	    readOnlyMemoryIdx.markDeletes(delDocs);
 	  }
-	  
+
 	  DiskSearchIndex<R> diskIdx = _idxMgr.getDiskIndex();
 	  if(diskIdx != null)
 	  {
 	    diskIdx.markDeletes(delDocs);
 	  }
 	}
-	
+
 	@Override
 	protected void commitPropagatedDeletes() throws IOException
 	{
@@ -58,7 +58,7 @@ public class RAMLuceneIndexDataLoader<R extends IndexReader> extends LuceneIndex
 	  {
 	    readOnlyMemoryIdx.commitDeletes();
 	  }
-	  
+
 	  DiskSearchIndex<R> diskIdx = _idxMgr.getDiskIndex();
 	  if(diskIdx != null)
 	  {

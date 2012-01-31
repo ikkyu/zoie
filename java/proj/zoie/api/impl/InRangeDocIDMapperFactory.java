@@ -10,9 +10,9 @@ import proj.zoie.api.ZoieSegmentReader;
 public class InRangeDocIDMapperFactory implements DocIDMapperFactory {
 	private final long _start;
 	private final int _count;
-	
+
 	private static final int RAM_COUNT_THRESHOLD = 100000;
-	
+
     public InRangeDocIDMapperFactory(long start,int count){
     	if (start<0 || count<0){
     		throw new IllegalArgumentException("invalid range: ["+start+","+count+"]");
@@ -20,12 +20,12 @@ public class InRangeDocIDMapperFactory implements DocIDMapperFactory {
     	_start = start;
     	_count = count;
     }
-	
+
 	public DocIDMapper getDocIDMapper(ZoieMultiReader<?> reader) {
 		int docCount = reader.maxDoc();
 		final ZoieSegmentReader<?>[] subreaders = (ZoieSegmentReader<?>[])(reader.getSequentialSubReaders());
 		final int[] starts = reader.getStarts();
-		
+
 		if (docCount > RAM_COUNT_THRESHOLD){				// large disk index
 			final int[] uidArray = new int[_count];
 			Arrays.fill(uidArray,DocIDMapper.NOT_FOUND);
@@ -87,6 +87,6 @@ public class InRangeDocIDMapperFactory implements DocIDMapperFactory {
 				}
 			};
 		}
-		
+
 	}
 }
