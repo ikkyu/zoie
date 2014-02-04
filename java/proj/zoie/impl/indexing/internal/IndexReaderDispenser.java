@@ -30,11 +30,11 @@ import proj.zoie.api.indexing.IndexReaderDecorator;
 public class IndexReaderDispenser<R extends IndexReader>
 {
   private static final Logger log = Logger.getLogger(IndexReaderDispenser.class);
-  
+
   private static final int INDEX_OPEN_NUM_RETRIES=5;
-  
+
 //  public static final String  INDEX_DIRECTORY = "index.directory";
-  
+
   static final class InternalIndexReader<R extends IndexReader> extends ZoieMultiReader<R>
   {
     //private IndexSignature _sig;
@@ -64,7 +64,7 @@ public class IndexReaderDispenser<R extends IndexReader>
   private final IndexReaderDecorator<R> _decorator;
   private final DirectoryManager _dirMgr;
   private DiskSearchIndex<R> _idx;
-  
+
   public IndexReaderDispenser(DirectoryManager dirMgr, IndexReaderDecorator<R> decorator,DiskSearchIndex<R> idx)
   {
       _idx = idx;
@@ -84,15 +84,15 @@ public class IndexReaderDispenser<R extends IndexReader>
       }
     }
   }
-  
+
   public long getCurrentVersion()
   {
     return _currentSignature!=null ? _currentSignature.getVersion(): 0L;
   }
-  
+
   /**
      * constructs a new IndexReader instance
-     * 
+     *
      * @param indexPath
      *            Where the index is.
      * @return Constructed IndexReader instance.
@@ -104,16 +104,16 @@ public class IndexReaderDispenser<R extends IndexReader>
       if (!dirMgr.exists()){
         return null;
       }
-      
+
     Directory dir= dirMgr.getDirectory();
-    
+
     if (!IndexReader.indexExists(dir)){
       return null;
     }
-    
+
       int numTries=INDEX_OPEN_NUM_RETRIES;
       InternalIndexReader<R> reader=null;
-      
+
       // try max of 5 times, there might be a case where the segment file is being updated
       while(reader==null)
       {
@@ -123,14 +123,14 @@ public class IndexReaderDispenser<R extends IndexReader>
           throw new IOException("problem opening new index");
         }
         numTries--;
-        
+
         try{
           if(log.isDebugEnabled())
           {
             log.debug("opening index reader at: "+dirMgr.getPath());
           }
           IndexReader srcReader = IndexReader.open(dir,true);
-          
+
           try
           {
             reader=new InternalIndexReader<R>(srcReader, decorator,this);
@@ -169,14 +169,14 @@ public class IndexReaderDispenser<R extends IndexReader>
      */
     public ZoieIndexReader<R> getNewReader() throws IOException
     {
-        int numTries=INDEX_OPEN_NUM_RETRIES;   
+        int numTries=INDEX_OPEN_NUM_RETRIES;
         InternalIndexReader<R> reader=null;
-              
-        // try it for a few times, there is a case where lucene is swapping the segment file, 
+
+        // try it for a few times, there is a case where lucene is swapping the segment file,
         // or a case where the index directory file is updated, both are legitimate,
         // trying again does not block searchers,
         // the extra time it takes to get the reader, and to sync the index, memory index is collecting docs
-       
+
     while(reader==null)
     {
       if (numTries==0)
@@ -186,12 +186,12 @@ public class IndexReaderDispenser<R extends IndexReader>
       numTries--;
       try{
         IndexSignature sig = _dirMgr.getCurrentIndexSignature();
-  
+
         if (sig==null)
         {
           throw new IOException("no index exist");
         }
-        
+
         if (_currentReader==null){
           reader = newReader(_dirMgr, _decorator, sig);
             break;
@@ -223,7 +223,7 @@ public class IndexReaderDispenser<R extends IndexReader>
     // swap the internal readers
     if (_currentReader != reader)
     {
-      // assume that this is the only place that _currentReader gets refreshed 
+      // assume that this is the only place that _currentReader gets refreshed
       IndexReader oldReader = _currentReader;
       _currentReader = reader;
       // we release our hold on the old reader so that it will be closed when
@@ -234,7 +234,7 @@ public class IndexReaderDispenser<R extends IndexReader>
     }
     return reader;
   }
-  
+
   public ZoieIndexReader<R> getIndexReader()
   {
     if (_currentReader!=null){
@@ -244,7 +244,7 @@ public class IndexReaderDispenser<R extends IndexReader>
       return null;
     }
   }
-    
+
   /**
    * @param readers
    * @throws IOException
@@ -262,16 +262,16 @@ public class IndexReaderDispenser<R extends IndexReader>
     }
     if (error != null) throw error;
   }
-  
+
   /**
    * Closes the factory.
-   * 
+   *
    */
   public void close()
   {
     closeReader();
   }
-  
+
   /**
    * Closes the index reader
    */

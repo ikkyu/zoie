@@ -17,11 +17,11 @@ In Eclipse, go to the File menu and choose:
 
   Browse to the directory containing this file,
   select "ZoieAdmin".
-  
+
   Be sure to uncheck "Copy projects into workspace" if it is checked.
-  
+
   Click Finish.
-  
+
 You can now browse the project in Eclipse.
 
 To launch your web app in GWT development mode, go to the Run menu and choose:
@@ -53,7 +53,7 @@ To compile and also bundle into a .war file, type 'ant war'.
 
 If you supplied the junit path when invoking webAppCreator, you can type 'ant
 test' to run tests in development and production mode.
- 
+
 For a full listing of other targets, type 'ant -p'.
 
 -- Option C: Using another IDE --

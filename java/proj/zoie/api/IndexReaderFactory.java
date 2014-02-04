@@ -25,20 +25,20 @@ import org.apache.lucene.index.IndexReader;
  * This interface is IndexReader instances are to be managed.
  */
 public interface IndexReaderFactory<R extends IndexReader> {
-	
+
 	/**
 	 * Returns a list of index readers.
-	 * @return List of IndexReader instances 
+	 * @return List of IndexReader instances
 	 * @throws IOException
 	 */
 	List<R> getIndexReaders() throws IOException;
-	
+
 	/**
 	 * Gets the default analyzer used for indexing.
 	 * @return Default analyzer
 	 */
 	Analyzer getAnalyzer();
-	
+
 	/**
 	 * Returns the index readers.
 	 * @param r Returns the list of index reader instances.

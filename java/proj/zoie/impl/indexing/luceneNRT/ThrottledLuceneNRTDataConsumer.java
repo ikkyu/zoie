@@ -38,8 +38,8 @@ public class ThrottledLuceneNRTDataConsumer<V> implements DataConsumer<V>,IndexR
 	 * document ID field name
 	*/
 	public static final String DOCUMENT_ID_FIELD = "id";
-	  
-	
+
+
 	private IndexWriter _writer;
 	private Analyzer _analyzer;
 	private ZoieIndexableInterpreter<V> _interpreter;
@@ -49,15 +49,15 @@ public class ThrottledLuceneNRTDataConsumer<V> implements DataConsumer<V>,IndexR
 	private ReopenThread _reopenThread;
 	private HashSet<IndexReader> _returnSet = new HashSet<IndexReader>();
 	private ConcurrentLinkedQueue<IndexReader> _returnList = new ConcurrentLinkedQueue<IndexReader>();
-	
+
 	public ThrottledLuceneNRTDataConsumer(File dir,ZoieIndexableInterpreter<V> interpreter,long throttleFactor) throws IOException{
 		this(FSDirectory.open(dir),new StandardAnalyzer(Version.LUCENE_CURRENT),interpreter,throttleFactor);
 	}
-	
+
 	public ThrottledLuceneNRTDataConsumer(File dir,Analyzer analyzer,ZoieIndexableInterpreter<V> interpreter,long throttleFactor) throws IOException{
 		this(FSDirectory.open(dir),analyzer,interpreter,throttleFactor);
 	}
-	
+
 	public ThrottledLuceneNRTDataConsumer(Directory dir,Analyzer analyzer,ZoieIndexableInterpreter<V> interpreter,long throttleFactor){
 		_writer = null;
 		_analyzer = analyzer;
@@ -68,7 +68,7 @@ public class ThrottledLuceneNRTDataConsumer<V> implements DataConsumer<V>,IndexR
 		if (_throttleFactor<=0) throw new IllegalArgumentException("throttle factor must be > 0");
 		_reopenThread = new ReopenThread();
 	}
-	
+
 	public void start(){
 		try {
 			_writer = new IndexWriter(_dir, _analyzer,MaxFieldLength.UNLIMITED);
@@ -77,7 +77,7 @@ public class ThrottledLuceneNRTDataConsumer<V> implements DataConsumer<V>,IndexR
 			logger.error("uanble to start consumer: "+e.getMessage(),e);
 		}
 	}
-	
+
 	public void shutdown(){
 		_reopenThread.terminate();
 		if (_currentReader!=null){
@@ -95,24 +95,24 @@ public class ThrottledLuceneNRTDataConsumer<V> implements DataConsumer<V>,IndexR
 			}
 		}
 	}
-	
+
 	public void consume(Collection<proj.zoie.api.DataConsumer.DataEvent<V>> events)
 			throws ZoieException {
 		if (_writer == null){
 			throw new ZoieException("Internal IndexWriter null, perhaps not started?");
 		}
-		
+
 		if (events.size() > 0){
 			for (DataEvent<V> event : events){
 				ZoieIndexable indexable = _interpreter.convertAndInterpret(event.getData());
 				if (indexable.isSkip()) continue;
-				
+
 				try {
 				  _writer.deleteDocuments(new Term(DOCUMENT_ID_FIELD,String.valueOf(indexable.getUID())));
 				} catch(IOException e) {
 				  throw new ZoieException(e.getMessage(),e);
 				}
-				  
+
 			  IndexingReq[] reqs = indexable.buildIndexingReqs();
 			  for (IndexingReq req : reqs){
 				Analyzer localAnalyzer = req.getAnalyzer();
@@ -128,8 +128,8 @@ public class ThrottledLuceneNRTDataConsumer<V> implements DataConsumer<V>,IndexR
 				}
 			  }
 			}
-			
-			
+
+
 			int numdocs;
 			try {
 				// for realtime commit is not needed per lucene mailing list
@@ -138,7 +138,7 @@ public class ThrottledLuceneNRTDataConsumer<V> implements DataConsumer<V>,IndexR
 			} catch (IOException e) {
 				throw new ZoieException(e.getMessage(),e);
 			}
-			
+
 			logger.info("flushed "+events.size()+" events to index, index now contains "+numdocs+" docs.");
 		}
 	}
@@ -169,7 +169,7 @@ public class ThrottledLuceneNRTDataConsumer<V> implements DataConsumer<V>,IndexR
 			}
 		}
 	}
-	
+
 	private void returnReader(IndexReader reader){
 		synchronized(_returnSet){
 			if (!_returnSet.contains(reader)){
@@ -188,7 +188,7 @@ public class ThrottledLuceneNRTDataConsumer<V> implements DataConsumer<V>,IndexR
 			}
 		}
 	}
-	
+
 	private class ReopenThread extends Thread{
 		private boolean _stop;
 		ReopenThread(){
@@ -196,14 +196,14 @@ public class ThrottledLuceneNRTDataConsumer<V> implements DataConsumer<V>,IndexR
 			setDaemon(true);
 			_stop=false;
 		}
-		
+
 		void terminate(){
 			if (!_stop){
 				_stop=false;
 				interrupt();
 			}
 		}
-		
+
 		public void run(){
 			while(!_stop){
 				try {
@@ -226,7 +226,7 @@ public class ThrottledLuceneNRTDataConsumer<V> implements DataConsumer<V>,IndexR
 			}
 		}
 	}
-  
+
   public long getVersion()
   {
     throw new UnsupportedOperationException();

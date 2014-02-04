@@ -36,25 +36,25 @@ public class MonitoredZoieService<R extends IndexReader> implements ZoieSearchSe
   protected final AtomicInteger _numSearches = new AtomicInteger(0);
 
   private static final Logger log = Logger.getLogger(MonitoredZoieService.class);
-	
+
   private final IndexReaderFactory<R> _idxReaderFactory;
-  
+
   private long _sum = 0L;
-  
+
   public MonitoredZoieService(IndexReaderFactory<R> idxReaderFactory)
   {
 	  _idxReaderFactory = idxReaderFactory;
   }
-  
+
   public SearchResult search(SearchRequest req) throws ZoieException
   {
 	long start = System.nanoTime();
     String queryString=req.getQuery();
 	Analyzer analyzer=_idxReaderFactory.getAnalyzer();
 	QueryParser qparser=new QueryParser(Version.LUCENE_CURRENT,"content",analyzer);
-	
+
 	SearchResult result=new SearchResult();
-	
+
 	List<R> readers=null;
 	Searcher searcher = null;
 	MultiReader multiReader=null;
@@ -67,7 +67,7 @@ public class MonitoredZoieService<R extends IndexReader> implements ZoieSearchSe
 		}
 		else
 		{
-			q = qparser.parse(queryString); 
+			q = qparser.parse(queryString);
 		}
 		readers=_idxReaderFactory.getIndexReaders();
 		multiReader=new MultiReader(readers.toArray(new IndexReader[readers.size()]));
@@ -78,12 +78,12 @@ public class MonitoredZoieService<R extends IndexReader> implements ZoieSearchSe
 		long end = System.nanoTime();
 		long latency = (end-start)/NANOS_IN_MILLI;
 		result.setTime(latency);
-		
+
 		int count = _numSearches.get();
 		int index = count%SAMPLE_SIZE;
-		
+
 		_sum+=latency;
-		
+
 		if (count>SAMPLE_SIZE){
 			_sum-=_latencies[index];
 		}
@@ -93,8 +93,8 @@ public class MonitoredZoieService<R extends IndexReader> implements ZoieSearchSe
 //	    _numHits.add(hits.totalHits);
 		_latencies[index]=(int)latency;
 		_numHits[index]=hits.totalHits;
-		
-		log.info("search=[query=" + req.getQuery() + "]" + ", searchResult=[numSearchResults=" + result.getTotalHits() + ";numTotalDocs=" + result.getTotalDocs() + "]" + "in " + result.getTime() + "ms"); 
+
+		log.info("search=[query=" + req.getQuery() + "]" + ", searchResult=[numSearchResults=" + result.getTotalHits() + ";numTotalDocs=" + result.getTotalDocs() + "]" + "in " + result.getTime() + "ms");
 	    _numSearches.incrementAndGet();
 	    return result;
 	}
@@ -119,7 +119,7 @@ public class MonitoredZoieService<R extends IndexReader> implements ZoieSearchSe
 		}
 	}
   }
-  
+
   protected void countQuery(long time)
   {
     if(!_qps.containsKey(time)) { _qps.put(time, 0); }
@@ -130,29 +130,29 @@ public class MonitoredZoieService<R extends IndexReader> implements ZoieSearchSe
   {
     return percentile(_latencies, pct);
   }
-  
+
   public int percentileHits(int pct)
   {
     return percentile(_numHits, pct);
   }
-  
+
   public int percentileQps(int pct)
   {
 	int[] qps = _qps.values().toIntArray();
     Arrays.sort(qps);
     return percentile(qps, pct);
   }
-  
+
   public int numSearches()
   {
     return _numSearches.get();
   }
-  
+
   public long getAverage(){
 	  return _sum/Math.min(_numSearches.get(), SAMPLE_SIZE);
   }
-  
-  
+
+
   private int percentile(int[] values, int pct)
   {
     Arrays.sort(values);

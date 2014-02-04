@@ -2,7 +2,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g='urn:import:com.google.gwt.user.client.ui'>
 	<g:HTMLPanel>
 	    <LINK href="search.css" rel="stylesheet" type="text/css"/>
-	        
+
 		<center>
 			<g:TextBox ui:field='queryInput' stylePrimaryName='query' maxLength='2048' visibleLength='55'/>
 			<g:Button ui:field='searchButton' stylePrimaryName='search' text='Search'/>

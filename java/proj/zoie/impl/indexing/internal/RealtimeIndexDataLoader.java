@@ -35,7 +35,7 @@ import proj.zoie.impl.indexing.IndexingEventListener;
 
 /**
  * Keeps track of the number of incoming data events.
- * 
+ *
  * @author ymatsuda, xgu
  *
  */
@@ -46,9 +46,9 @@ public class RealtimeIndexDataLoader<R extends IndexReader, V> extends BatchedIn
   private final DiskLuceneIndexDataLoader<R> _luceneDataLoader;
   private final Analyzer                     _analyzer;
   private final Similarity                   _similarity;
-  
+
   private static Logger log = Logger.getLogger(RealtimeIndexDataLoader.class);
-  
+
   public RealtimeIndexDataLoader(DiskLuceneIndexDataLoader<R> dataLoader, int batchSize,int maxBatchSize,long delay,
                                  Analyzer analyzer,
                                  Similarity similarity,
@@ -63,7 +63,7 @@ public class RealtimeIndexDataLoader<R extends IndexReader, V> extends BatchedIn
     _ramConsumer = new RAMLuceneIndexDataLoader<R>(_analyzer, _similarity, _idxMgr);
     _luceneDataLoader = dataLoader;
   }
-  
+
   /* (non-Javadoc)
    * @see proj.zoie.impl.indexing.internal.BatchedIndexDataLoader#consume(java.util.Collection)
    */
@@ -82,7 +82,7 @@ public class RealtimeIndexDataLoader<R extends IndexReader, V> extends BatchedIn
           DataEvent<V> event = iter.next();
           ZoieIndexable indexable =
                 ((ZoieIndexableInterpreter<V>) _interpreter).convertAndInterpret(event.getData());
-          
+
           DataEvent<ZoieIndexable> newEvent =
               new DataEvent<ZoieIndexable>(event.getVersion(), indexable);
           indexableList.add(newEvent);
@@ -99,7 +99,7 @@ public class RealtimeIndexDataLoader<R extends IndexReader, V> extends BatchedIn
         _ramConsumer.consume(indexableList);// consumer clear the list!
         _currentBatchSize += size;
         _eventCount += size;
-        
+
         while (_currentBatchSize > _maxBatchSize)
         {
           // check if load manager thread is alive
@@ -107,9 +107,9 @@ public class RealtimeIndexDataLoader<R extends IndexReader, V> extends BatchedIn
           {
             throw new ZoieException("load manager has stopped");
           }
-          
-          this.notifyAll(); // wake up load manager thread      
-          
+
+          this.notifyAll(); // wake up load manager thread
+
           try
           {
             this.wait(60000); // 1 min
@@ -122,12 +122,12 @@ public class RealtimeIndexDataLoader<R extends IndexReader, V> extends BatchedIn
       }
     }
   }
-  
+
   public synchronized int getCurrentBatchSize()
   {
     return _currentBatchSize;
   }
-  
+
   @Override
   protected synchronized void processBatch()
   {

@@ -19,15 +19,15 @@ import java.io.Serializable;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class SearchRequest implements Serializable,IsSerializable 
+public class SearchRequest implements Serializable,IsSerializable
 {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	private String query;
-	
+
 	public SearchRequest()
 	{
 		query=null;

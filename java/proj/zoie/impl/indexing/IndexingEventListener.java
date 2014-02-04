@@ -21,17 +21,17 @@ import java.io.Serializable;
  * <b> experimental api </b>. Call-back for indexing events.
  */
 public interface IndexingEventListener {
-	
+
 	/**
 	 * Indexing event abstraction.
 	 */
 	public static class IndexingEvent implements Serializable{
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 1L;
 	}
-	
+
 	/**
 	 * Handler for indexing events
 	 * @param evt event to be handled.

@@ -23,11 +23,11 @@ import it.unimi.dsi.fastutil.ints.IntIterator;
 import it.unimi.dsi.fastutil.ints.IntSet;
 
 /**
- * This class, a IntSet decorator, is for accelerating look-up by having a filter 
+ * This class, a IntSet decorator, is for accelerating look-up by having a filter
  * in front of the underlying IntSet. The filter is basically a Bloom filter.
  * The hash table size and the hash function are tuned for fast calculation of hash values.
  * The underlying IntSet should not be updated while this accelerator is in use.
- * 
+ *
  * @author ymatsuda
  *
  */
@@ -37,7 +37,7 @@ public class IntSetAccelerator implements IntSet
   private final int _mask;
   private final IntSet _set;
   private final int MIXER = 2147482951; // a prime number
-  
+
   public IntSetAccelerator(IntSet set)
   {
     _set = set;
@@ -53,19 +53,19 @@ public class IntSetAccelerator implements IntSet
     while(iter.hasNext())
     {
       int h = iter.nextInt() * MIXER;
-      
+
       long bits = _filter[h & _mask];
       bits |= ((1L << (h >>> 26)));
       bits |= ((1L << ((h >> 20) & 0x3F)));
       _filter[h & _mask] = bits;
     }
   }
-  
+
   public boolean contains(int val)
   {
     final int h = val * MIXER;
     final long bits = _filter[h & _mask];
-    
+
     return (bits & (1L << (h >>> 26))) != 0 && (bits & (1L << ((h >> 20) & 0x3F))) != 0 && _set.contains(val);
   }
 

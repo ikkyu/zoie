@@ -31,7 +31,7 @@ public class ZoieServer {
 		}
 
 		System.out.println("using config dir: "+confDir.getAbsolutePath());
-		
+
 		Properties props = new Properties();
 		File serverPropFile = new File(confDir,"server.properties");
 		if (confDir.exists() && serverPropFile.exists())
@@ -54,13 +54,13 @@ public class ZoieServer {
 				}
 			}
 		}
-		
+
 		log.info("loaded properties: "+props);
-		
+
 		String warDirName = props.getProperty("war.dir");
 		if (warDirName == null) throw new IllegalArgumentException("war.dir property not specified");
 		File warDir = new File(warDirName);
-		
+
 		int minThread;
 		try
 		{
@@ -71,7 +71,7 @@ public class ZoieServer {
 			log.error("defaulting min.thread to 50");
 			minThread=50;
 		}
-		
+
 		int maxThread;
 		try
 		{
@@ -82,8 +82,8 @@ public class ZoieServer {
 			log.error("defaulting max.thread to 75");
 			maxThread=75;
 		}
-		
-		
+
+
 		int maxIdleTime;
 		try
 		{
@@ -94,25 +94,25 @@ public class ZoieServer {
 			log.error("defaulting max.ideltime to 2000");
 			maxIdleTime=2000;
 		}
-		
+
 		QueuedThreadPool threadPool = new QueuedThreadPool();
 		threadPool.setName("server(jetty) threads");
 		threadPool.setMinThreads(minThread);
 		threadPool.setMaxThreads(maxThread);
 		threadPool.setMaxIdleTimeMs(maxIdleTime);
 		threadPool.start();
-		
+
 		log.info("request threadpool started.");
-		
+
 		final Server server = new Server();
 		server.setThreadPool(threadPool);
-		
+
 		String indexDir = props.getProperty("index.directory");
 		if (indexDir!=null)
 		{
 			System.getProperties().put("index.directory", indexDir);
 		}
-		
+
 	    SelectChannelConnector connector = new SelectChannelConnector();
 	    int serverPort;
 	    try
@@ -134,7 +134,7 @@ public class ZoieServer {
 				return name.endsWith(".war");
 			}
 	    });
-	    
+
 	    log.info("loading wars...");
 	    for (File warFile : warFiles)
 	    {
@@ -164,7 +164,7 @@ public class ZoieServer {
 	    }
 
 	    log.info("finished loading wars.");
-	    
+
 	    Runtime.getRuntime().addShutdownHook(new Thread(){
 			public void run()
 			{
@@ -189,7 +189,7 @@ public class ZoieServer {
 	    } catch (Exception e) {
 	      log.error(e.getMessage(),e);
 	    }
-	    
+
 	    try
 	    {
 	    	server.join();

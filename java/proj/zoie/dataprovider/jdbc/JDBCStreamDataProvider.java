@@ -64,7 +64,7 @@ public class JDBCStreamDataProvider<T> extends StreamDataProvider<T> {
       }
       event = _stmtBuilder.buildDataEvent(_res);
       _version = event.getVersion();
-    } 
+    }
     catch (SQLException sqle)
     {
       log.error(sqle.getMessage(),sqle);
@@ -91,7 +91,7 @@ public class JDBCStreamDataProvider<T> extends StreamDataProvider<T> {
       }
     }
 
-    DataConsumer<T> dc = getDataConsumer(); 
+    DataConsumer<T> dc = getDataConsumer();
     if (dc == null)
     {
       _version = 0;

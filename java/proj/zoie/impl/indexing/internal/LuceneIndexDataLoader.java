@@ -51,16 +51,16 @@ public abstract class LuceneIndexDataLoader<R extends IndexReader> implements Da
 	}
 
 	protected abstract BaseSearchIndex<R> getSearchIndex();
-	
+
     protected abstract void propagateDeletes(LongSet delDocs) throws IOException;
     protected abstract void commitPropagatedDeletes() throws IOException;
 
 	/**
 	 * @Precondition incoming events sorted by version number
 	 * <br>every event in the events collection must be non-null
-	 * 
+	 *
 	 * @see proj.zoie.api.DataConsumer#consume(java.util.Collection)
-	 * 
+	 *
 	 */
 	public void consume(Collection<DataEvent<ZoieIndexable>> events) throws ZoieException {
 		int eventCount = events.size();
@@ -73,7 +73,7 @@ public abstract class LuceneIndexDataLoader<R extends IndexReader> implements Da
 		long version = idx.getVersion();		// current version
 
 		LongSet delSet =new LongOpenHashSet();
-		
+
 		try {
 		  for(DataEvent<ZoieIndexable> evt : events)
 		  {
@@ -83,7 +83,7 @@ public abstract class LuceneIndexDataLoader<R extends IndexReader> implements Da
     		    ZoieIndexable indexable = evt.getData();
     		    if (indexable == null || indexable.isSkip())
     		      continue;
-    
+
     		    long uid = indexable.getUID();
     		    delSet.add(uid);
     		    addList.remove(uid);
@@ -144,7 +144,7 @@ public abstract class LuceneIndexDataLoader<R extends IndexReader> implements Da
 			}
 		}
 	}
-	
+
     public void loadFromIndex(RAMSearchIndex<R> ramIndex) throws ZoieException
     {
       try
@@ -164,7 +164,7 @@ public abstract class LuceneIndexDataLoader<R extends IndexReader> implements Da
         throw new ZoieException(ioe);
       }
     }
-    
+
   /**
    * @return the version number of the search index.
    */

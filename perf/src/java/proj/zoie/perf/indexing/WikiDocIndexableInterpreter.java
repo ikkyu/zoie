@@ -18,19 +18,19 @@ public class WikiDocIndexableInterpreter implements ZoieIndexableInterpreter<Con
 	private ThreadLocal<SimpleDateFormat> _formatter = new ThreadLocal<SimpleDateFormat>() {
 	      protected SimpleDateFormat initialValue() {
 	    	  return new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss.SSS");
-		      }   
+		      }
 		    };
-		    
+
 	public ZoieIndexable convertAndInterpret(ContentDoc src) {
 		return new EnWikiIndexable(src);
 	}
-	
+
 	private class EnWikiIndexable implements ZoieIndexable{
 		private ContentDoc _wikiDoc;
 		public EnWikiIndexable(ContentDoc wikiDoc){
 			_wikiDoc = wikiDoc;
 		}
-		
+
 		private Document buildDoc(){
 			Document doc = new Document();
 			String data = _wikiDoc.getTitle();
@@ -44,11 +44,11 @@ public class WikiDocIndexableInterpreter implements ZoieIndexableInterpreter<Con
 			Date datedata = _wikiDoc.getDate();
 			if (datedata!=null){
 			  Field dateField = new Field("date",_formatter.get().format(datedata),Store.NO,Index.NOT_ANALYZED_NO_NORMS);
-			
+
 			  dateField.setOmitTermFreqAndPositions(true);
 			  doc.add(dateField);
 			}
-			
+
 			Properties props = _wikiDoc.getProps();
 			if (props!=null){
 				Set<Entry<Object,Object>> entries = props.entrySet();
@@ -64,7 +64,7 @@ public class WikiDocIndexableInterpreter implements ZoieIndexableInterpreter<Con
 			}
 			return doc;
 		}
-		
+
 		public IndexingReq[] buildIndexingReqs() {
 			IndexingReq req = new IndexingReq(buildDoc());
 			return new IndexingReq[]{req};
@@ -81,7 +81,7 @@ public class WikiDocIndexableInterpreter implements ZoieIndexableInterpreter<Con
 		public boolean isSkip() {
 			return false;
 		}
-		
+
 	}
 
 }

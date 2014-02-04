@@ -34,13 +34,13 @@ import proj.zoie.api.IndexReaderFactory;
 public class SearchServiceImpl<R extends IndexReader>{
 
 	private static final Logger log = Logger.getLogger(SearchServiceImpl.class);
-	
+
 	private IndexReaderFactory<R> _idxReaderFactory;
-	
+
 	public SearchServiceImpl(IndexReaderFactory<R> idxReaderFactory){
 		_idxReaderFactory=idxReaderFactory;
 	}
-	
+
 	private static Map<String,String[]> convert(Document doc)
 	{
 		Map<String,String[]> map=new HashMap<String,String[]>();
@@ -57,14 +57,14 @@ public class SearchServiceImpl<R extends IndexReader>{
 		}
 		return map;
 	}
-	
+
 	public SearchResult search(SearchRequest req){
 		String queryString=req.getQuery();
 		Analyzer analyzer=_idxReaderFactory.getAnalyzer();
 		QueryParser qparser=new QueryParser(Version.LUCENE_CURRENT,"content",analyzer);
-		
+
 		SearchResult result=new SearchResult();
-		
+
 		List<R> readers=null;
 
 		MultiReader multiReader=null;
@@ -78,20 +78,20 @@ public class SearchServiceImpl<R extends IndexReader>{
 			}
 			else
 			{
-				q = qparser.parse(queryString); 
+				q = qparser.parse(queryString);
 			}
 			readers=_idxReaderFactory.getIndexReaders();
 			multiReader=new MultiReader(readers.toArray(new IndexReader[readers.size()]), false);
 			searcher=new IndexSearcher(multiReader);
-			
+
 			long start=System.currentTimeMillis();
 			TopDocs docs=searcher.search(q, null, 10);
 			long end=System.currentTimeMillis();
-			
+
 			result.setTime(end-start);
 			result.setTotalDocs(multiReader.numDocs());
 			result.setTotalHits(docs.totalHits);
-			
+
 
 			ScoreDoc[] scoreDocs=docs.scoreDocs;
 			ArrayList<SearchHit> hitList=new ArrayList<SearchHit>(scoreDocs.length);
@@ -100,22 +100,22 @@ public class SearchServiceImpl<R extends IndexReader>{
 				SearchHit hit=new SearchHit();
 				hit.setScore(scoreDoc.score);
 				int docid=scoreDoc.doc;
-				
+
 				Document doc=multiReader.document(docid);
 				String content=doc.get("content");
-				
+
 				Scorer qs=new QueryScorer(q);
-				
+
 				SimpleHTMLFormatter formatter=new SimpleHTMLFormatter("<span class=\"hl\">","</span>");
-				Highlighter hl=new Highlighter(formatter,qs); 
+				Highlighter hl=new Highlighter(formatter,qs);
 				String[] fragments=hl.getBestFragments(analyzer, "content",content, 1);
-				
+
 				Map<String,String[]> fields=convert(doc);
 				fields.put("fragment",fragments);
 				hit.setFields(fields);
 				hitList.add(hit);
 			}
-			
+
 			result.setHits(hitList.toArray(new SearchHit[hitList.size()]));
 			return result;
 		}

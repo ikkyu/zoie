@@ -23,7 +23,7 @@ import java.util.NoSuchElementException;
 /**
  * A generic PriorityQueue based on heap.
  * @author Xiaoyang Gu
- * 
+ *
  * @param <T> the type of the Queue content.
  */
 public class PriorityQueue<T> extends AbstractQueue<T>
@@ -36,7 +36,7 @@ public class PriorityQueue<T> extends AbstractQueue<T>
 
   /**
    * @param capacity the maximum number of items the queue accepts
-   * @param comparator a comparator that is used to order the items. 
+   * @param comparator a comparator that is used to order the items.
    */
   @SuppressWarnings("unchecked")
   public PriorityQueue(int capacity, Comparator<? super T> comparator)
@@ -49,7 +49,7 @@ public class PriorityQueue<T> extends AbstractQueue<T>
   /**
    * {@inheritDoc} Retrieves, but does not remove, the head of this queue. This
    * implementation returns the result of peek unless the queue is empty.
-   * 
+   *
    * @see java.util.Queue#element()
    */
   public T element() throws NoSuchElementException
@@ -63,7 +63,7 @@ public class PriorityQueue<T> extends AbstractQueue<T>
    * Returns an iterator over the elements in this collection. There are no guarantees
    * concerning the order in which the elements are returned (unless this collection is an
    * instance of some class that provides a guarantee).
-   * 
+   *
    * @see java.util.AbstractCollection#iterator()
    */
   @Override
@@ -98,7 +98,7 @@ public class PriorityQueue<T> extends AbstractQueue<T>
    * may impose insertion restrictions (for example capacity bounds), method offer is
    * generally preferable to method Collection.add, which can fail to insert an element
    * only by throwing an exception.
-   * 
+   *
    * @see java.util.Queue#offer(java.lang.Object)
    */
   public boolean offer(T item)
@@ -117,7 +117,7 @@ public class PriorityQueue<T> extends AbstractQueue<T>
   /**
    * Retrieves, but does not remove, the head of this queue, returning null if this queue
    * is empty.
-   * 
+   *
    * @see java.util.Queue#peek()
    */
   public T peek()
@@ -129,7 +129,7 @@ public class PriorityQueue<T> extends AbstractQueue<T>
 
   /**
    * Retrieves and removes the head of this queue, or null if this queue is empty.
-   * 
+   *
    * @see java.util.Queue#poll()
    */
   public T poll()
@@ -147,7 +147,7 @@ public class PriorityQueue<T> extends AbstractQueue<T>
 
   /**
    * Returns the number of elements in this collection.
-   * 
+   *
    * @see java.util.AbstractCollection#size()
    */
   @Override

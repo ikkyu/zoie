@@ -51,7 +51,7 @@ import proj.zoie.test.mock.MockDataLoader;
 public class ZoieTest extends ZoieTestCase
 {
   static Logger logger = Logger.getLogger(ZoieTest.class);
-  
+
   public ZoieTest() {
   }
 
@@ -233,7 +233,7 @@ public class ZoieTest extends ZoieTestCase
       finally{
         idxSystem.returnIndexReaders(readers);
       }
-    }	
+    }
   }
 
   public void testRealtime() throws ZoieException
@@ -244,7 +244,7 @@ public class ZoieTest extends ZoieTestCase
     String query="zoie";
     QueryParser parser=new QueryParser(Version.LUCENE_CURRENT,"contents",idxSystem.getAnalyzer());
     Query q=null;
-    try 
+    try
     {
       q=parser.parse(query);
     } catch (ParseException e) {
@@ -300,12 +300,12 @@ public class ZoieTest extends ZoieTestCase
           finally{
             idxSystem.returnIndexReaders(readers);
           }
-        }	
+        }
         try {
           Thread.sleep(30);
         } catch (InterruptedException e) {
           e.printStackTrace();
-        }	
+        }
       }
 
       assertEquals("maybe race condition in disk flush", Arrays.toString(expected), Arrays.toString(results));
@@ -319,7 +319,7 @@ public class ZoieTest extends ZoieTestCase
       memoryProvider.stop();
       idxSystem.shutdown();
       deleteDirectory(idxDir);
-    }	
+    }
   }
 
   public void testStreamDataProvider() throws ZoieException
@@ -341,7 +341,7 @@ public class ZoieTest extends ZoieTestCase
 
       memoryProvider.syncWthVersion(10000, count-1);
       int num=consumer.getCount();
-      assertEquals(num, count);   
+      assertEquals(num, count);
     }
     finally
     {
@@ -757,7 +757,7 @@ public class ZoieTest extends ZoieTestCase
     {
       idxSystem.shutdown();
       deleteDirectory(idxDir);
-    }   
+    }
   }
 
   public void testDocIDMapper()
@@ -839,7 +839,7 @@ public class ZoieTest extends ZoieTestCase
     String query="zoie";
     QueryParser parser=new QueryParser(Version.LUCENE_CURRENT,"contents",idxSystem.getAnalyzer());
     Query q=null;
-    try 
+    try
     {
       q=parser.parse(query);
     }

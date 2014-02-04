@@ -32,11 +32,11 @@ public class DocIDMapperImpl implements DocIDMapper
 	  private final long[] _filter;
 	  private final int _mask;
 	  private final int MIXER = 2147482951; // a prime number
-	  
+
 	  public DocIDMapperImpl(long[] uidArray)
 	  {
 	    int len = uidArray.length;
-	    
+
 	    int mask = len/4;
 	    mask |= (mask >> 1);
 	    mask |= (mask >> 2);
@@ -44,7 +44,7 @@ public class DocIDMapperImpl implements DocIDMapper
 	    mask |= (mask >> 8);
 	    mask |= (mask >> 16);
 	    _mask = mask;
-	    
+
 	    _filter = new long[mask+1];
 
 	    for(long uid : uidArray)
@@ -52,14 +52,14 @@ public class DocIDMapperImpl implements DocIDMapper
 	      if(uid != ZoieIndexReader.DELETED_UID)
 	      {
 	        int h = (int)((uid >>> 32) ^ uid)* MIXER;
-	        
+
 	        long bits = _filter[h & _mask];
 	        bits |= ((1L << (h >>> 26)));
 	        bits |= ((1L << ((h >> 20) & 0x3F)));
 	        _filter[h & _mask] = bits;
 	      }
 	    }
-	    
+
 	    _start = new int[_mask + 1 + 1];
 	    len = 0;
 	    for(long uid : uidArray)
@@ -77,10 +77,10 @@ public class DocIDMapperImpl implements DocIDMapper
 	      _start[i] = val;
 	    }
 	    _start[_mask] = len;
-	    
+
 	    long[] partitionedUidArray = new long[len];
 	    int[] docArray = new int[len];
-	    
+
 	    for(long uid : uidArray)
 	    {
 	      if(uid != ZoieIndexReader.DELETED_UID)
@@ -89,7 +89,7 @@ public class DocIDMapperImpl implements DocIDMapper
 	        partitionedUidArray[i] = uid;
 	      }
 	    }
-	    
+
 	    int s = _start[0];
 	    for(int i = 1; i < _start.length; i++)
 	    {
@@ -100,7 +100,7 @@ public class DocIDMapperImpl implements DocIDMapper
 	      }
 	      s = e;
 	    }
-	    
+
 	    for(int docid = 0; docid < uidArray.length; docid++)
 	    {
 	      long uid = uidArray[docid];
@@ -114,11 +114,11 @@ public class DocIDMapperImpl implements DocIDMapper
 	        }
 	      }
 	    }
-	    
+
 	    _uidArray = partitionedUidArray;
 	    _docArray = docArray;
 	  }
-	  
+
 	  public int getDocID(final long uid)
 	  {
 	    final int h = (int)((uid >>> 32) ^ uid) * MIXER;
@@ -126,7 +126,7 @@ public class DocIDMapperImpl implements DocIDMapper
 
 	    // check the filter
 	    final long bits = _filter[p];
-	    if((bits & (1L << (h >>> 26))) == 0 || (bits & (1L << ((h >> 20) & 0x3F))) == 0) return -1; 
+	    if((bits & (1L << (h >>> 26))) == 0 || (bits & (1L << ((h >> 20) & 0x3F))) == 0) return -1;
 
 	    // do binary search in the partition
 	    int begin = _start[p];
@@ -136,15 +136,15 @@ public class DocIDMapperImpl implements DocIDMapper
 	    {
 	      int mid = (begin+end) >>> 1;
 	      long midval = _uidArray[mid];
-	      
+
 	      if(midval == uid) return _docArray[mid];
 	      if(mid == end) return -1;
-	      
+
 	      if(midval < uid) begin = mid + 1;
 	      else end = mid;
 	    }
 	  }
-	  
+
 	  private static final int findIndex(final long[] arr, final long uid, int begin, int end)
 	  {
 	    if(begin >= end) return -1;
@@ -152,11 +152,11 @@ public class DocIDMapperImpl implements DocIDMapper
 
 	    while(true)
 	    {
-	      int mid = (begin+end) >>> 1; 
+	      int mid = (begin+end) >>> 1;
 	      long midval = arr[mid];
 	      if(midval == uid) return mid;
 	      if(mid == end) return -1;
-	      
+
 	      if(midval < uid) begin = mid + 1;
 	      else end = mid;
 	    }

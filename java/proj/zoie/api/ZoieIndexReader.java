@@ -35,14 +35,14 @@ import proj.zoie.api.indexing.IndexReaderDecorator;
 
 public abstract class ZoieIndexReader<R extends IndexReader> extends FilterIndexReader {
 	public static final long DELETED_UID = Long.MIN_VALUE;
-	
+
 	protected ThreadLocal<int[]> _delDocIds;
 	protected long _minUID;
 	protected long _maxUID;
 	protected boolean _noDedup = false;
     protected final IndexReaderDecorator<R> _decorator;
     protected DocIDMapper _docIDMapper;
-    
+
     public static <R extends IndexReader> List<R> extractDecoratedReaders(List<ZoieIndexReader<R>> readerList) throws IOException{
   	  LinkedList<R> retList = new LinkedList<R>();
   	  for (ZoieIndexReader<R> reader : readerList){
@@ -50,7 +50,7 @@ public abstract class ZoieIndexReader<R extends IndexReader> extends FilterIndex
   	  }
   	  return retList;
   	}
-  	
+
   	public static class SubReaderInfo<R extends IndexReader>{
 	  public final R subreader;
 	  public final int subdocid;
@@ -60,21 +60,21 @@ public abstract class ZoieIndexReader<R extends IndexReader> extends FilterIndex
 		this.subdocid = subdocid;
 	  }
   	}
-  	
+
   	public interface SubReaderAccessor<R extends IndexReader>{
   		SubReaderInfo<R> getSubReaderInfo(int docid);
   	}
-  	
+
   	public interface SubZoieReaderAccessor<R extends IndexReader>{
   		SubReaderInfo<ZoieIndexReader<R>> getSubReaderInfo(int docid);
   		SubReaderInfo<ZoieIndexReader<R>> geSubReaderInfoFromUID(long uid);
   	}
-  	  
+
   	public static <R extends IndexReader> SubReaderAccessor<R> getSubReaderAccessor(List<R> readerList){
   	  int size = readerList.size();
   	  final IndexReader[] subR = new IndexReader[size];
   	  final int[] starts = new int[size+1];
-  	  
+
   	  int maxDoc = 0;
 
   	  int i = 0;
@@ -85,9 +85,9 @@ public abstract class ZoieIndexReader<R extends IndexReader> extends FilterIndex
   	    i++;
   	  }
   	  starts[size] = maxDoc;
-  	  
+
   	  return new SubReaderAccessor<R>() {
-		
+
 		public SubReaderInfo<R> getSubReaderInfo(int docid) {
 			int subIdx = ReaderUtil.subIndex(docid, starts);
 		  	int subdocid = docid - starts[subIdx];
@@ -96,12 +96,12 @@ public abstract class ZoieIndexReader<R extends IndexReader> extends FilterIndex
 		}
 	  };
   	}
-	
+
   	public static <R extends IndexReader> SubZoieReaderAccessor<R> getSubZoieReaderAccessor(List<ZoieIndexReader<R>> readerList){
     	  int size = readerList.size();
     	  final ZoieIndexReader<?>[] subR = new ZoieIndexReader<?>[size];
     	  final int[] starts = new int[size+1];
-    	  
+
     	  int maxDoc = 0;
 
     	  int i = 0;
@@ -112,9 +112,9 @@ public abstract class ZoieIndexReader<R extends IndexReader> extends FilterIndex
     	    i++;
     	  }
     	  starts[size] = maxDoc;
-    	  
+
     	  return new SubZoieReaderAccessor<R>() {
-  		
+
 	  		public SubReaderInfo<ZoieIndexReader<R>> getSubReaderInfo(int docid) {
 	  			int subIdx = ReaderUtil.subIndex(docid, starts);
 	  		  	int subdocid = docid - starts[subIdx];
@@ -136,15 +136,15 @@ public abstract class ZoieIndexReader<R extends IndexReader> extends FilterIndex
 			}
 	  	  };
     	}
-	
+
 	public static <R extends IndexReader> ZoieIndexReader<R> open(IndexReader r) throws IOException{
 		return open(r,null);
 	}
-	
+
 	public static <R extends IndexReader> ZoieIndexReader<R> open(IndexReader r,IndexReaderDecorator<R> decorator) throws IOException{
 		return new ZoieMultiReader<R>(r,decorator);
 	}
-	
+
 	public static <R extends IndexReader> ZoieIndexReader<R> open(Directory dir,IndexReaderDecorator<R> decorator) throws IOException{
 		IndexReader r = IndexReader.open(dir, true);
 		// load zoie reader
@@ -158,15 +158,15 @@ public abstract class ZoieIndexReader<R extends IndexReader> extends FilterIndex
 			throw ioe;
 		}
 	}
-	
+
 	public static <R extends IndexReader,T extends IndexReader> R mergeIndexReaders(List<ZoieIndexReader<T>> readerList,IndexReaderMerger<R,T> merger){
 		return merger.mergeIndexReaders(readerList);
 	}
-	
+
 	public static <T extends IndexReader> MultiReader mergeIndexReaders(List<ZoieIndexReader<T>> readerList){
 		return mergeIndexReaders(readerList,new DefaultIndexReaderMerger<T>());
 	}
-		
+
 	protected ZoieIndexReader(IndexReader in,IndexReaderDecorator<R> decorator) throws IOException
 	{
 		super(in);
@@ -175,16 +175,16 @@ public abstract class ZoieIndexReader<R extends IndexReader> extends FilterIndex
 		_minUID=Long.MAX_VALUE;
 		_maxUID=0;
 	}
-	
+
 	abstract public List<R> getDecoratedReaders() throws IOException;
     abstract public void setDelDocIds();
     abstract public void markDeletes(LongSet delDocs, LongSet deltedUIDs);
     abstract public void commitDeletes();
-	     
+
 	public IndexReader getInnerReader(){
 		return in;
 	}
-	
+
 	@Override
 	public boolean hasDeletions()
 	{
@@ -195,9 +195,9 @@ public abstract class ZoieIndexReader<R extends IndexReader> extends FilterIndex
 	  }
 	  return in.hasDeletions();
 	}
-	
+
 	protected abstract boolean hasIndexDeletions();
-	
+
 	public boolean hasDuplicates()
 	{
 		int[] delSet = _delDocIds.get();
@@ -206,43 +206,43 @@ public abstract class ZoieIndexReader<R extends IndexReader> extends FilterIndex
 
 	@Override
 	abstract public boolean isDeleted(int docid);
-	
+
 	public boolean isDuplicate(int docid)
 	{
 	  int[] delSet = _delDocIds.get();
 	  return delSet!=null && Arrays.binarySearch(delSet, docid) >= 0;
 	}
-	
+
 	public boolean isDuplicateUID(long uid){
 	  int docid = _docIDMapper.getDocID(uid);
 	  return isDuplicate(docid);
 	}
-	
+
 	public int[] getDelDocIds()
 	{
 	  return _delDocIds.get();
 	}
-	
+
 	public long getMinUID()
 	{
 		return _minUID;
 	}
-	
+
 	public long getMaxUID()
 	{
 		return _maxUID;
 	}
 
 	abstract public long getUID(int docid);
-	
+
 	public DocIDMapper getDocIDMaper(){
 		return _docIDMapper;
 	}
-	
+
 	public void setDocIDMapper(DocIDMapper docIDMapper){
 		_docIDMapper = docIDMapper;
 	}
-	
+
 	public void setNoDedup(boolean noDedup)
 	{
 	  _noDedup = noDedup;
@@ -250,11 +250,11 @@ public abstract class ZoieIndexReader<R extends IndexReader> extends FilterIndex
 
 	@Override
 	abstract public ZoieIndexReader<R>[] getSequentialSubReaders();
-	
+
 	@Override
 	abstract public TermDocs termDocs() throws IOException;
-	
+
 	@Override
 	abstract public TermPositions termPositions() throws IOException;
-	
+
 }

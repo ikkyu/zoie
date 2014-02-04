@@ -32,7 +32,7 @@ import proj.zoie.api.indexing.IndexReaderDecorator;
 
 public class SearchIndexManager<R extends IndexReader>{
     private static final Logger log = Logger.getLogger(SearchIndexManager.class);
-    
+
     public static enum Status
     {
       Sleep, Working
@@ -43,7 +43,7 @@ public class SearchIndexManager<R extends IndexReader>{
 
 	  DocIDMapperFactory _docIDMapperFactory;
 	  private volatile DiskSearchIndex<R> _diskIndex;
-	  
+
 	  private volatile Status _diskIndexerStatus;
 	  private volatile Mem<R> _mem;
 	  /**
@@ -52,16 +52,16 @@ public class SearchIndexManager<R extends IndexReader>{
 	   */
 	  private final Object _memLock = new Object();
 
-	  
+
 	  /**
-	   * @param location 
+	   * @param location
 	   * @param indexReaderDecorator
 	   */
 	  public SearchIndexManager(DirectoryManager dirMgr,IndexReaderDecorator<R> indexReaderDecorator)
 	  {
 	    _dirMgr = dirMgr;
 	    _docIDMapperFactory = new DefaultDocIDMapperFactory();
-	    
+
 	    if (indexReaderDecorator!=null)
 	    {
 	      _indexReaderDecorator=indexReaderDecorator;
@@ -72,86 +72,86 @@ public class SearchIndexManager<R extends IndexReader>{
 	    }
 	    init();
 	  }
-	  
+
 	  public void setDocIDMapperFactory(DocIDMapperFactory docIDMapperFactory){
 		  if (docIDMapperFactory != null){
 		    _docIDMapperFactory = docIDMapperFactory;
 		  }
 	  }
-	  
+
 	  public DocIDMapperFactory getDocIDMapperFactory(){
 		  return _docIDMapperFactory;
 	  }
-	  
+
 //	  public File getDiskIndexLocation()
 //	  {
 //	    return _dirMgr;
 //	  }
-	  
+
 	  public int getDiskSegmentCount() throws IOException{
 		  return _diskIndex.getSegmentCount();
 	  }
-	  
+
       public void setNumLargeSegments(int numLargeSegments)
       {
     	_diskIndex._mergePolicyParams.setNumLargeSegments(numLargeSegments);
       }
-      
+
       public int getNumLargeSegments()
       {
         return _diskIndex._mergePolicyParams.getNumLargeSegments();
       }
-      
+
       public void setMaxSmallSegments(int maxSmallSegments)
       {
     	  _diskIndex._mergePolicyParams.setMaxSmallSegments(maxSmallSegments);
       }
-      
+
       public int getMaxSmallSegments()
       {
         return _diskIndex._mergePolicyParams.getMaxSmallSegments();
       }
-      
+
       public void setPartialExpunge(boolean doPartialExpunge)
       {
     	  _diskIndex._mergePolicyParams.setPartialExpunge(doPartialExpunge);
       }
-      
+
       public boolean getPartialExpunge()
       {
         return _diskIndex._mergePolicyParams.getPartialExpunge();
       }
-      
+
 	  public void setMergeFactor(int mergeFactor)
 	  {
 		  _diskIndex._mergePolicyParams.setMergeFactor(mergeFactor);
 	  }
-	  
+
 	  public int getMergeFactor()
 	  {
 		return _diskIndex._mergePolicyParams.getMergeFactor();
 	  }
-		
+
 	  public void setMaxMergeDocs(int maxMergeDocs)
 	  {
 		  _diskIndex._mergePolicyParams.setMaxMergeDocs(maxMergeDocs);
 	  }
-		
+
 	  public int getMaxMergeDocs()
 	  {
 		return _diskIndex._mergePolicyParams.getMaxMergeDocs();
 	  }
-	  
+
 	  public void setUseCompoundFile(boolean useCompoundFile)
 	  {
 		  _diskIndex._mergePolicyParams.setUseCompoundFile(useCompoundFile);
 	  }
-	  
+
 	  public boolean isUseCompoundFile()
 	  {
 	    return _diskIndex._mergePolicyParams.isUseCompoundFile();
 	  }
-	  
+
 	  /**
 	   * Gets the current disk indexer status
 	   * @return
@@ -160,12 +160,12 @@ public class SearchIndexManager<R extends IndexReader>{
 	  {
 	    return _diskIndexerStatus;
 	  }
-	  
-	  
+
+
 	  public void returnReaders(List<ZoieIndexReader<R>> readers) throws IOException{
 		  _diskIndex.returnReaders(readers);
 	  }
-	  
+
 	  public List<ZoieIndexReader<R>> getIndexReaders()
 	  throws IOException
 	  {
@@ -185,7 +185,7 @@ public class SearchIndexManager<R extends IndexReader>{
 
 	        if (memIndexB != null)                           // load memory index B
 	        {
-	          reader = memIndexB.openIndexReader();            
+	          reader = memIndexB.openIndexReader();
 	          if (reader != null)
 	          {
 	            reader.setDelDocIds();
@@ -217,10 +217,10 @@ public class SearchIndexManager<R extends IndexReader>{
 	    }
 	    return readers;
 	  }
-	  
+
 	  public void setDiskIndexerStatus(Status status)
 	  {
-	    
+
 	    // going from sleep to wake, disk index starts to index
 	    // which according to the spec, index B is created and it starts to collect data
 	    // IMPORTANT: do nothing if the status is not being changed.
@@ -228,7 +228,7 @@ public class SearchIndexManager<R extends IndexReader>{
 	    {
 
 	      log.info("updating batch indexer status from "+_diskIndexerStatus+" to "+status);
-	      
+
 	      if (status == Status.Working)
 	      { // sleeping to working
 	        long version = _diskIndex.getVersion();
@@ -271,7 +271,7 @@ public class SearchIndexManager<R extends IndexReader>{
 	  private void init()
 	  {
 		_diskIndexerStatus = Status.Sleep;
-	    _diskIndex = new DiskSearchIndex<R>(_dirMgr, _indexReaderDecorator,this); 
+	    _diskIndex = new DiskSearchIndex<R>(_dirMgr, _indexReaderDecorator,this);
         ZoieIndexReader<R> diskIndexReader = null;
 	    if(_diskIndex != null)
 	    {
@@ -304,12 +304,12 @@ public class SearchIndexManager<R extends IndexReader>{
 	  {
 	    return _mem.get_currentWritable();
 	  }
-	  
+
 	  public RAMSearchIndex<R> getCurrentReadOnlyMemoryIndex()
 	  {
 	    return _mem.get_currentReadOnly();
 	  }
-	  
+
 	  /**
 	   * Clean up
 	   */
@@ -339,7 +339,7 @@ public class SearchIndexManager<R extends IndexReader>{
 	    }
 	  }
 
-	  
+
 	  public long getCurrentDiskVersion() throws IOException
 	  {
 	    return (_diskIndex==null) ? 0 : _diskIndex.getVersion();
@@ -349,31 +349,31 @@ public class SearchIndexManager<R extends IndexReader>{
 	  {
 	    return (_diskIndex==null) ? 0 : _diskIndex.getNumdocs();
 	  }
-	  
+
 	  public int getRamAIndexSize()
 	  {
         RAMSearchIndex<R> memIndexA = _mem.get_memIndexA();
 	    return (memIndexA==null) ? 0 : memIndexA.getNumdocs();
 	  }
-	  
+
 	  public long getRamAVersion()
 	  {
         RAMSearchIndex<R> memIndexA = _mem.get_memIndexA();
 	    return (memIndexA==null) ? 0L : memIndexA.getVersion();
 	  }
-	  
+
 	  public int getRamBIndexSize()
 	  {
         RAMSearchIndex<R> memIndexB = _mem.get_memIndexB();
 	    return (memIndexB==null) ? 0 : memIndexB.getNumdocs();
 	  }
-	  
+
 	  public long getRamBVersion()
 	  {
 	    RAMSearchIndex<R> memIndexB = _mem.get_memIndexB();
 	    return (memIndexB==null) ? 0L : memIndexB.getVersion();
 	  }
-	  
+
 	  /**
 	   * utility method to delete a directory
 	   * @param dir
@@ -382,7 +382,7 @@ public class SearchIndexManager<R extends IndexReader>{
 	  private static void deleteDir(File dir) throws IOException
 	  {
 	    if (dir == null) return;
-	    
+
 	    if (dir.isDirectory())
 	    {
 	      File[] files=dir.listFiles();
@@ -410,9 +410,9 @@ public class SearchIndexManager<R extends IndexReader>{
 	  public void purgeIndex()
 	  {
 		log.info("purging index ...");
-		
+
         _dirMgr.purge();
-        
+
         if(_diskIndex != null)
 		{
           _diskIndex.clearDeletes();
@@ -421,10 +421,10 @@ public class SearchIndexManager<R extends IndexReader>{
           Mem<R> mem = new Mem<R>(memIndexA, null, memIndexA, null, null);
           _mem = mem;
 		}
-		
+
 		log.info("index purged");
 	  }
-	  
+
 	  public void refreshDiskReader() throws IOException
 	  {
 		  log.info("refreshing disk reader ...");
@@ -490,7 +490,7 @@ public class SearchIndexManager<R extends IndexReader>{
     private final RAMSearchIndex<R> _currentWritable;
     private final RAMSearchIndex<R> _currentReadOnly;
     private final ZoieIndexReader<R> _diskIndexReader;
-    Mem(RAMSearchIndex<R> a, RAMSearchIndex<R> b, RAMSearchIndex<R> w, 
+    Mem(RAMSearchIndex<R> a, RAMSearchIndex<R> b, RAMSearchIndex<R> w,
     	RAMSearchIndex<R> r, ZoieIndexReader<R> d)
     {
       _memIndexA = a;
@@ -499,7 +499,7 @@ public class SearchIndexManager<R extends IndexReader>{
       _currentReadOnly = r;
       _diskIndexReader = d;
     }
-    
+
     protected RAMSearchIndex<R> get_memIndexA()
     {
       return _memIndexA;

@@ -23,7 +23,7 @@ package proj.zoie.api;
 public class ZoieException extends Exception {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 

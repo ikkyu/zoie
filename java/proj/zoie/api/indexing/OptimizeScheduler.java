@@ -20,7 +20,7 @@ public abstract class OptimizeScheduler {
   {
     FULL, PARTIAL, NONE
   };
-  
+
   abstract public OptimizeType getScheduledOptimizeType();
   abstract public void finished();
 }

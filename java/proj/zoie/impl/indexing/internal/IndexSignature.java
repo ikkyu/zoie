@@ -27,7 +27,7 @@ import org.apache.log4j.Logger;
 
 public class IndexSignature {
 	private static Logger log = Logger.getLogger(IndexSignature.class);
-	
+
     private long   _version;                     // current version
 
     public IndexSignature(long version){
@@ -49,12 +49,12 @@ public class IndexSignature {
       writer.write(String.valueOf(_version));
       writer.flush();
     }
-    
+
     public static IndexSignature read(InputStream in) throws IOException
     {
       BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
       String line = reader.readLine();
-      
+
       if (line != null)
       {
         long version = 0L;
@@ -67,7 +67,7 @@ public class IndexSignature {
           log.warn(e.getMessage());
             version = 0L;
         }
-        
+
         return new IndexSignature(version);
       }
       else

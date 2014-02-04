@@ -24,40 +24,40 @@ public class PerfZoieServiceAdmin implements PerfZoieServiceMBean
   protected int _waitTimeMillis = 0;
   protected ExecutorService _threadPool = Executors.newFixedThreadPool(numThreads + 1);
   protected volatile boolean _perfRunStarted = false;
-  
+
   protected volatile ZoieSystem<IndexReader,?> _zoieSystem;
   protected volatile MonitoredZoieService<?> _svc;
   protected volatile Thread _perfThread;
-  
+
   // #queries per minute monitoring
   protected long _beginTime=0L;
   protected long _beginCount = 0;
-  
+
   public void setWaitTimeMillis(int waitTimeMillis)
   {
     _waitTimeMillis = waitTimeMillis;
   }
-  
+
   public int getWaitTimeMillis()
   {
     return _waitTimeMillis;
   }
-  
+
   public void setMonitoredZoieService(MonitoredZoieService<?> svc)
   {
     _svc = svc;
   }
-  
+
   public MonitoredZoieService<?> getMonitoredZoieService()
   {
     return _svc;
   }
-  
+
   public void setZoieSystem(ZoieSystem<IndexReader,?> system)
   {
     _zoieSystem = system;
   }
-  
+
   public ZoieSystem<?,?> getZoieSystem()
   {
     return _zoieSystem;
@@ -72,7 +72,7 @@ public class PerfZoieServiceAdmin implements PerfZoieServiceMBean
       _perfThread.start();
     }
   }
-  
+
   public synchronized void endPerfRun()
   {
     _perfRunStarted = false;
@@ -87,7 +87,7 @@ public class PerfZoieServiceAdmin implements PerfZoieServiceMBean
   {
     return _svc.percentileQps(pct);
   }
-  
+
   public int percentileHits(int pct)
   {
     return _svc.percentileHits(pct);
@@ -152,13 +152,13 @@ public class PerfZoieServiceAdmin implements PerfZoieServiceMBean
   {
     return _svc.numSearches();
   }
-  
+
   public void beginTiming()
   {
     _beginTime = System.nanoTime()/1000000; // in millis
     _beginCount = _svc.numSearches();
   }
-  
+
   public long getAverage(){
 	  return _svc.getAverage();
   }

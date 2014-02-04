@@ -52,7 +52,7 @@ public class JMXAdminServiceImpl extends RemoteServiceServlet implements JMXAdmi
 		TMB.setThreadCpuTimeEnabled(true);
 		OSMB = ManagementFactory.getOperatingSystemMXBean();
 	}
-	
+
   public ZoieServerInfo getZoieSystemInfo()
   {
     ZoieServerInfo zsi = new ZoieServerInfo();
@@ -94,7 +94,7 @@ public class JMXAdminServiceImpl extends RemoteServiceServlet implements JMXAdmi
     }
     return zsi;
   }
-  
+
   public void invokeNoParam(String methodName)
   {
     JMXServiceURL url;
@@ -142,26 +142,26 @@ public class JMXAdminServiceImpl extends RemoteServiceServlet implements JMXAdmi
 
 	public ServerInfo getServerInfo() {
 		String serverString = getServletContext().getServerInfo();
-		
+
 		ServerInfo info = new ServerInfo();
 		info.setServerVersion(serverString);
 		info.setAvailCPU(OSMB.getAvailableProcessors());
-		
+
 		String osArch = OSMB.getArch();
 		String osName = OSMB.getName();
 		String osVer = OSMB.getVersion();
-		
+
 		StringBuilder osVersion = new StringBuilder();
 		osVersion.append(osName).append(", version: ").append(osVer).append(", ").append(osArch);
 		info.setOsVersion(osVersion.toString());
 		return info;
 	}
-	
+
 	private long[] getAllThreadCPUTimes(){
 		long[] times = new long[2];
 		times[0]=0L;
 		times[1]=0L;
-		
+
 		long[] threadIDs = TMB.getAllThreadIds();
 		for (long tid : threadIDs){
 			times[0] += TMB.getThreadCpuTime(tid);
@@ -169,14 +169,14 @@ public class JMXAdminServiceImpl extends RemoteServiceServlet implements JMXAdmi
 		}
 		return times;
 	}
-	
+
 	public RuntimeSystemInfo getRuntimeSystemInfo(){
 		RuntimeSystemInfo sysInfo = new RuntimeSystemInfo();
 		Runtime rt = Runtime.getRuntime();
 		sysInfo.setFreeMemory(rt.freeMemory());
 		sysInfo.setMaxMemory(rt.maxMemory());
 		sysInfo.setNumThreads(TMB.getThreadCount());
-		
+
 		long[] times = getAllThreadCPUTimes();
 		sysInfo.setCpuTime(times[0]);
 		sysInfo.setUserTime(times[1]);

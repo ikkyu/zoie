@@ -49,7 +49,7 @@ public class ZoieSegmentReader<R extends IndexReader> extends ZoieIndexReader<R>
     private long[] _uidArray;
     private IntRBTreeSet _delDocIdSet = new IntRBTreeSet();
     private int[] _currentDelDocIds;
-    
+
     static class UIDTokenStream extends TokenStream {
         private boolean returnToken = false;
 
@@ -80,13 +80,13 @@ public class ZoieSegmentReader<R extends IndexReader> extends ZoieIndexReader<R>
               } else {
                 return false;
               }
-		}  
+		}
     }
 
 	public static void fillDocumentID(Document doc,long id){
 	  Field uidField = new Field(ZoieSegmentReader.UID_TERM.field(), new UIDTokenStream(id));
 	  uidField.setOmitNorms(true);
-      doc.add(uidField); 
+      doc.add(uidField);
 	}
 
 	public ZoieSegmentReader(IndexReader in, IndexReaderDecorator<R> decorator)
@@ -98,7 +98,7 @@ public class ZoieSegmentReader<R extends IndexReader> extends ZoieIndexReader<R>
 		init(in);
 		_decoratedReader = (decorator == null ? null : decorator.decorate(this));
 	}
-	
+
 	ZoieSegmentReader(ZoieSegmentReader<R> copyFrom,IndexReader innerReader) throws IOException{
 		super(innerReader,copyFrom._decorator);
 		_uidArray = copyFrom._uidArray;
@@ -107,7 +107,7 @@ public class ZoieSegmentReader<R extends IndexReader> extends ZoieIndexReader<R>
 		_noDedup = copyFrom._noDedup;
 		_docIDMapper = copyFrom._docIDMapper;
 		_delDocIdSet = copyFrom._delDocIdSet;
-		
+
 		if (copyFrom._decorator == null){
 			_decoratedReader = null;
 		}
@@ -115,7 +115,7 @@ public class ZoieSegmentReader<R extends IndexReader> extends ZoieIndexReader<R>
 			_decoratedReader = copyFrom._decorator.redecorate(copyFrom._decoratedReader, this);
 		}
 	}
-	
+
 	@Override
 	public void markDeletes(LongSet delDocs, LongSet deletedUIDs)
 	{
@@ -135,24 +135,24 @@ public class ZoieSegmentReader<R extends IndexReader> extends ZoieIndexReader<R>
             deletedUIDs.add(uid);
           }
         }
-      }	  
+      }
 	}
-	
+
 	@Override
 	public void commitDeletes()
 	{
 	  _currentDelDocIds = _delDocIdSet.toIntArray();
 	}
-	
+
 	public void setDelDocIds()
 	{
 	  _delDocIds.set(_currentDelDocIds);
 	}
-	
+
 	public R getDecoratedReader(){
 		return _decoratedReader;
 	}
-	
+
 	@Override
 	public List<R> getDecoratedReaders()
     {
@@ -162,11 +162,11 @@ public class ZoieSegmentReader<R extends IndexReader> extends ZoieIndexReader<R>
 	  }
 	  return list;
     }
-	
+
 	private void init(IndexReader reader) throws IOException
 	{
 		int maxDoc = reader.maxDoc();
-		_uidArray = new long[maxDoc]; 
+		_uidArray = new long[maxDoc];
 		TermPositions tp = null;
 		byte[] payloadBuffer = new byte[8];       // four bytes for a long
 		try
@@ -177,9 +177,9 @@ public class ZoieSegmentReader<R extends IndexReader> extends ZoieIndexReader<R>
           {
             int doc = tp.doc();
             assert doc < maxDoc;
-            
+
             while(idx < doc) _uidArray[idx++] = DELETED_UID; // fill the gap
-            
+
             tp.nextPosition();
             tp.getPayload(payloadBuffer, 0);
             long uid = bytesToLong(payloadBuffer);
@@ -197,12 +197,12 @@ public class ZoieSegmentReader<R extends IndexReader> extends ZoieIndexReader<R>
           }
 		}
 	}
-	
+
 	private static long bytesToLong(byte[] bytes){
         return ((long)(bytes[7] & 0xFF) << 56) | ((long)(bytes[6] & 0xFF) << 48) | ((long)(bytes[5] & 0xFF) << 40) | ((long)(bytes[4] & 0xFF) << 32) | ((long)(bytes[3] & 0xFF) << 24) | ((long)(bytes[2] & 0xFF) << 16)
            | ((long)(bytes[1] & 0xFF) <<  8) |  (long)(bytes[0] & 0xFF);
 	}
-	
+
 	@Override
 	public long getUID(int docid)
 	{
@@ -218,7 +218,7 @@ public class ZoieSegmentReader<R extends IndexReader> extends ZoieIndexReader<R>
 	protected boolean hasIndexDeletions(){
 		return in.hasDeletions();
 	}
-	
+
 	@Override
 	public boolean isDeleted(int docid)
 	{
@@ -229,13 +229,13 @@ public class ZoieSegmentReader<R extends IndexReader> extends ZoieIndexReader<R>
 	  }
 	  return in.isDeleted(docid);
 	}
-	
+
 	@Override
 	public TermDocs termDocs(Term term) throws IOException {
 		 ensureOpen();
 		 TermDocs td = in.termDocs(term);
 		 if(_noDedup) return td;
-		  
+
 		 int[] delDocIds = _delDocIds.get();
 		 if(td == null || delDocIds == null || delDocIds.length == 0) return td;
 	     return new ZoieSegmentTermDocs(td, new ArrayDocIdSet(delDocIds));
@@ -247,22 +247,22 @@ public class ZoieSegmentReader<R extends IndexReader> extends ZoieIndexReader<R>
 	  ensureOpen();
 	  TermDocs td = in.termDocs();
 	  if(_noDedup) return td;
-	  
+
 	  int[] delDocIds = _delDocIds.get();
 	  if(td == null || delDocIds == null || delDocIds.length == 0) return td;
-      
+
       return new ZoieSegmentTermDocs(td, new ArrayDocIdSet(delDocIds));
 	}
-	
+
 	@Override
 	public TermPositions termPositions(Term term) throws IOException {
 		ensureOpen();
 		  TermPositions tp = in.termPositions(term);
 	      if(_noDedup) return tp;
-	      
+
 	      int[] delDocIds = _delDocIds.get();
 	      if(tp == null || delDocIds == null || delDocIds.length == 0) return tp;
-	      
+
 	      return new ZoieSegmentTermPositions(tp, new ArrayDocIdSet(delDocIds));
 	}
 
@@ -272,10 +272,10 @@ public class ZoieSegmentReader<R extends IndexReader> extends ZoieIndexReader<R>
 	  ensureOpen();
 	  TermPositions tp = in.termPositions();
       if(_noDedup) return tp;
-      
+
       int[] delDocIds = _delDocIds.get();
       if(tp == null || delDocIds == null || delDocIds.length == 0) return tp;
-      
+
       return new ZoieSegmentTermPositions(tp, new ArrayDocIdSet(delDocIds));
 	}
 
@@ -283,18 +283,18 @@ public class ZoieSegmentReader<R extends IndexReader> extends ZoieIndexReader<R>
 	public ZoieIndexReader<R>[] getSequentialSubReaders() {
 		return null;
 	}
-	
+
 	public String getSegmentName(){
 		return ((SegmentReader)in).getSegmentName();
 	}
 
 	@Override
 	protected void doClose() throws IOException {
-		
+
 	}
 
 	@Override
 	public synchronized void decRef() throws IOException {
-		
+
 	}
 }

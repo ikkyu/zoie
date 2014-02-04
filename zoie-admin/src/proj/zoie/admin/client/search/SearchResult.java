@@ -23,19 +23,19 @@ public class SearchResult implements Serializable,IsSerializable
 {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	private int totalHits;
 	private int totalDocs;
 	private long time;
-	
+
 	public SearchResult()
 	{
-		
+
 	}
-	
+
 	private SearchHit[] hits;
 
 	public int getTotalHits() {
@@ -69,5 +69,5 @@ public class SearchResult implements Serializable,IsSerializable
 	public void setHits(SearchHit[] hits) {
 		this.hits = hits;
 	}
-	
+
 }

@@ -27,7 +27,7 @@ public class FileUtil {
 	  private static void deleteDir(File dir)
 	  {
 	    if (dir == null) return;
-	    
+
 	    if (dir.isDirectory())
 	    {
 	      File[] files=dir.listFiles();

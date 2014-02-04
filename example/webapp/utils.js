@@ -169,7 +169,7 @@ dwr.util.toDescriptiveString = function(data, showLevels, options) {
     lineTerminator: "\n",
     oneLineMaxItems: 5,
     shortStringMaxLength: 13,
-    propertyNameMaxLength: 30 
+    propertyNameMaxLength: 30
   };
   for (var p in defaultoptions) {
     if (!(p in opt)) {
@@ -189,7 +189,7 @@ dwr.util.toDescriptiveString = function(data, showLevels, options) {
     style:true, currentStyle:true, runtimeStyle:true,
     parentTextEdit:true
   };
-  
+
   function recursive(data, showLevels, indentDepth, options) {
     var reply = "";
     try {
@@ -199,7 +199,7 @@ dwr.util.toDescriptiveString = function(data, showLevels, options) {
         if (showLevels == 0 && str.length > options.shortStringMaxLength)
           str = str.substring(0, options.shortStringMaxLength-3) + "...";
         if (options.escapeHtml) {
-          // Do the escape separately for every line as escapeHtml() on some 
+          // Do the escape separately for every line as escapeHtml() on some
           // browsers (IE) will strip line breaks and we want to preserve them
           var lines = str.split("\n");
           for (var i = 0; i < lines.length; i++) lines[i] = dwr.util.escapeHtml(lines[i]);
@@ -225,12 +225,12 @@ dwr.util.toDescriptiveString = function(data, showLevels, options) {
         }
         reply = '"' + str + '"';
       }
-      
+
       // function
       else if (typeof data == "function") {
         reply = "function";
       }
-    
+
       // Array
       else if (dwr.util._isArray(data)) {
         if (showLevels == 0) { // Short format (don't show items)
@@ -268,7 +268,7 @@ dwr.util.toDescriptiveString = function(data, showLevels, options) {
           reply = strarr.join("");
         }
       }
-      
+
       // Objects except Date
       else if (dwr.util._isObject(data) && !dwr.util._isDate(data)) {
         if (showLevels == 0) { // Short format (don't show properties)
@@ -285,7 +285,7 @@ dwr.util.toDescriptiveString = function(data, showLevels, options) {
             strarr.push(" ");
           }
           strarr.push("{");
-          var isDomObject = dwr.util._isHTMLElement(data); 
+          var isDomObject = dwr.util._isHTMLElement(data);
           var count = 0;
           for (var prop in data) {
             var propvalue = data[prop];
@@ -315,12 +315,12 @@ dwr.util.toDescriptiveString = function(data, showLevels, options) {
           reply = strarr.join("");
         }
       }
-  
+
       // undefined, null, number, boolean, Date
       else {
         reply = "" + data;
       }
-  
+
       return reply;
     }
     catch(err) {
@@ -336,7 +336,7 @@ dwr.util.toDescriptiveString = function(data, showLevels, options) {
     }
     return strarr.join("");
   };
-  
+
   return recursive(data, showLevels, 0, opt);
 };
 
@@ -630,7 +630,7 @@ dwr.util.getValue = function(ele, options) {
   }
 
   if (dwr.util._isHTMLElement(ele, "select")) {
-    // Using "type" property instead of "multiple" as "type" is an official 
+    // Using "type" property instead of "multiple" as "type" is an official
     // client-side property since JS 1.1
     if (ele.type == "select-multiple") {
       var reply = new Array();
@@ -727,7 +727,7 @@ dwr.util.getText = function(ele) {
 };
 
 /**
- * Given a map, or a recursive structure consisting of arrays and maps, call 
+ * Given a map, or a recursive structure consisting of arrays and maps, call
  * setValue() for all leaf entries and use intermediate levels to form nested
  * element ids.
  * @see http://getahead.org/dwr/browser/util/setvalues
@@ -755,7 +755,7 @@ dwr.util._setValuesRecursive = function(data, idpath, options) {
     for (var prop in data) {
       var subidpath = idpath ? idpath+"."+prop : prop;
       // Object (not array), or array containing objects -> call ourselves recursively
-      if (dwr.util._isObject(data[prop]) && !dwr.util._isArray(data[prop]) 
+      if (dwr.util._isObject(data[prop]) && !dwr.util._isArray(data[prop])
           || dwr.util._isArray(data[prop]) && data[prop].length > 0 && dwr.util._isObject(data[prop][0])) {
         dwr.util._setValuesRecursive(data[prop], subidpath, options);
       }
@@ -776,10 +776,10 @@ dwr.util._setValuesRecursive = function(data, idpath, options) {
 };
 
 /**
- * Given a map, or a recursive structure consisting of arrays and maps, call 
+ * Given a map, or a recursive structure consisting of arrays and maps, call
  * getValue() for all leaf entries and use intermediate levels to form nested
  * element ids.
- * Given a string or element that refers to a form, create an object from the 
+ * Given a string or element that refers to a form, create an object from the
  * elements of the form.
  * @see http://getahead.org/dwr/browser/util/getvalues
  */
@@ -797,7 +797,7 @@ dwr.util.getValues = function(data, options) {
 };
 
 /**
- * Given a string or element that refers to a form, create an object from the 
+ * Given a string or element that refers to a form, create an object from the
  * elements of the form.
  * @see http://getahead.org/dwr/browser/util/getvalues
  */
@@ -885,10 +885,10 @@ dwr.util.addOptions = function(ele, data/*, options*/) {
     return;
   }
   if (data == null) return;
-  
+
   var argcount = arguments.length;
   var options = {};
-  var lastarg = arguments[argcount - 1]; 
+  var lastarg = arguments[argcount - 1];
   if (argcount > 2 && dwr.util._isObject(lastarg)) {
     options = lastarg;
     argcount--;
@@ -979,7 +979,7 @@ dwr.util.addOptions = function(ele, data/*, options*/) {
   }
 
   // All error routes through this function result in a return, so highlight now
-  dwr.util.highlight(ele, options); 
+  dwr.util.highlight(ele, options);
 };
 
 /**
@@ -1235,7 +1235,7 @@ dwr.util._removeIds = function(ele) {
 
 /**
  * Clone a template node and its embedded template child nodes according to
- * cardinalities (of arrays) in supplied data.  
+ * cardinalities (of arrays) in supplied data.
  */
 dwr.util.cloneNodeForValues = function(templateEle, data, options) {
   templateEle = dwr.util._getElementById(templateEle, "cloneNodeForValues()");
@@ -1245,15 +1245,15 @@ dwr.util.cloneNodeForValues = function(templateEle, data, options) {
   if (options.idPrefix != null)
     idpath = options.idPrefix;
   else
-    idpath = templateEle.id || ""; 
+    idpath = templateEle.id || "";
   return dwr.util._cloneNodeForValuesRecursive(templateEle, data, idpath, options);
 };
 
 /**
- * @private Recursive helper for cloneNodeForValues(). 
+ * @private Recursive helper for cloneNodeForValues().
  */
 dwr.util._cloneNodeForValuesRecursive = function(templateEle, data, idpath, options) {
-  // Incoming array -> make an id for each item and call clone of the template 
+  // Incoming array -> make an id for each item and call clone of the template
   // for each of them
   if (dwr.util._isArray(data)) {
     var clones = [];
@@ -1265,8 +1265,8 @@ dwr.util._cloneNodeForValuesRecursive = function(templateEle, data, idpath, opti
     return clones;
   }
   else
-  // Incoming object (not array) -> clone the template, add id prefixes, add 
-  // clone to DOM, and then recurse into any array properties if they contain 
+  // Incoming object (not array) -> clone the template, add id prefixes, add
+  // clone to DOM, and then recurse into any array properties if they contain
   // objects and there is a suitable template
   if (dwr.util._isObject(data) && !dwr.util._isArray(data)) {
     var clone = templateEle.cloneNode(true);
@@ -1286,8 +1286,8 @@ dwr.util._cloneNodeForValuesRecursive = function(templateEle, data, idpath, opti
 };
 
 /**
- * @private Substitute a leading idpath fragment with another idpath for all 
- * element ids tree, and remove ids that don't match the idpath. 
+ * @private Substitute a leading idpath fragment with another idpath for all
+ * element ids tree, and remove ids that don't match the idpath.
  */
 dwr.util._replaceIds = function(ele, oldidpath, newidpath) {
   if (ele.id) {
@@ -1320,8 +1320,8 @@ dwr.util._replaceIds = function(ele, oldidpath, newidpath) {
 };
 
 /**
- * @private Finds arrays in supplied data and uses any corresponding template 
- * node to make a clone for each item in the array. 
+ * @private Finds arrays in supplied data and uses any corresponding template
+ * node to make a clone for each item in the array.
  */
 dwr.util._cloneSubArrays = function(data, idpath, options) {
   for (prop in data) {

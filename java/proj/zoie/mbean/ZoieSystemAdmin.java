@@ -23,13 +23,13 @@ import proj.zoie.impl.indexing.ZoieSystem;
 
 public class ZoieSystemAdmin implements ZoieSystemAdminMBean {
 	private final ZoieSystemAdminMBean _internalMBean;
-	
+
 	@SuppressWarnings("unchecked")
 	public ZoieSystemAdmin(ZoieSystem zoieSystem)
 	{
 		_internalMBean=zoieSystem.getAdminMBean();
 	}
-	
+
 	public void refreshDiskReader()  throws IOException{
 		_internalMBean.refreshDiskReader();
 	}
@@ -65,7 +65,7 @@ public class ZoieSystemAdmin implements ZoieSystemAdminMBean {
 	public int getMaxBatchSize() {
 		return _internalMBean.getMaxBatchSize();
 	}
-	
+
 	public int getRamAIndexSize() {
 		return _internalMBean.getRamAIndexSize();
 	}
@@ -109,7 +109,7 @@ public class ZoieSystemAdmin implements ZoieSystemAdminMBean {
 	public void flushToDiskIndex() throws ZoieException{
 		_internalMBean.flushToDiskIndex();
 	}
-	
+
 
 	public void purgeIndex() throws IOException
 	{
@@ -143,17 +143,17 @@ public class ZoieSystemAdmin implements ZoieSystemAdminMBean {
 	public void setUseCompoundFile(boolean useCompoundFile) {
 		_internalMBean.setUseCompoundFile(useCompoundFile);
 	}
-    
+
     public int getCurrentMemBatchSize()
     {
-      return _internalMBean.getCurrentMemBatchSize(); 
+      return _internalMBean.getCurrentMemBatchSize();
     }
-    
+
     public int getCurrentDiskBatchSize()
     {
-      return _internalMBean.getCurrentDiskBatchSize(); 
+      return _internalMBean.getCurrentDiskBatchSize();
     }
-    
+
     public int getDiskIndexSegmentCount() throws IOException{
 		return _internalMBean.getDiskIndexSegmentCount();
 	}

@@ -39,23 +39,23 @@ import proj.zoie.api.indexing.ZoieIndexable.IndexingReq;
 
 public abstract class BaseSearchIndex<R extends IndexReader> {
 	  private static final Logger log = Logger.getLogger(BaseSearchIndex.class);
-	  
+
 	  private int _eventsHandled=0;
 	  protected MergeScheduler _mergeScheduler;
 	  protected IndexWriter _indexWriter = null;
 	  protected volatile LongOpenHashSet _delDocs = new LongOpenHashSet();
 	  protected final SearchIndexManager<R> _idxMgr;
-	  
+
 	  protected BaseSearchIndex(SearchIndexManager<R> idxMgr){
 		  _idxMgr = idxMgr;
 	  }
-	  
+
 	  /**
 	   * gets index version, e.g. SCN
 	   * @return index version
 	   */
 	  abstract public long getVersion();
-	  
+
 	  /**
 	   * gets number of docs in the index, .e.g maxdoc - number of deleted docs
 	   * @return
@@ -69,7 +69,7 @@ public abstract class BaseSearchIndex<R extends IndexReader> {
 	   */
 	  abstract public void setVersion(long version)
 	      throws IOException;
-	  
+
 	  /**
 	   * close and free all resources
 	   */
@@ -77,24 +77,24 @@ public abstract class BaseSearchIndex<R extends IndexReader> {
 	  {
 	    closeIndexWriter();
 	  }
-	  
+
       abstract public ZoieIndexReader<R> openIndexReader() throws IOException;
-	  
+
 	  abstract protected IndexReader openIndexReaderForDelete() throws IOException;
-	  
+
       abstract public void refresh() throws IOException;
 
       public void updateIndex(LongSet delDocs, List<IndexingReq> insertDocs,Analyzer defaultAnalyzer,Similarity similarity)
 	      throws IOException
 	  {
 	    deleteDocs(delDocs);
-		
+
 	    IndexWriter idxMod = null;
 	    try
 	    {
 	      idxMod = openIndexWriter(defaultAnalyzer,similarity);
 	      if (idxMod != null)
-	      { 
+	      {
 	        for (IndexingReq idxPair : insertDocs)
 	        {
 	          Analyzer analyzer = idxPair.getAnalyzer();
@@ -116,17 +116,17 @@ public abstract class BaseSearchIndex<R extends IndexReader> {
 	      }
 	    }
 	  }
-	  
+
 	  public LongSet getDelDocs()
 	  {
 	    return _delDocs;
 	  }
-	  
+
 	  public void clearDeletes()
 	  {
 	    _delDocs = new LongOpenHashSet();
 	  }
-	  
+
 	  public void markDeletes(LongSet delDocs) throws IOException
 	  {
 	    if(delDocs != null && delDocs.size() > 0)
@@ -138,7 +138,7 @@ public abstract class BaseSearchIndex<R extends IndexReader> {
 	      }
 	    }
 	  }
-	  
+
 	  public void commitDeletes() throws IOException
 	  {
         ZoieIndexReader<R> reader = openIndexReader();
@@ -147,7 +147,7 @@ public abstract class BaseSearchIndex<R extends IndexReader> {
           reader.commitDeletes();
         }
 	  }
-	  
+
 	  private void deleteDocs(LongSet delDocs) throws IOException
 	  {
 		int[] delArray=null;
@@ -159,7 +159,7 @@ public abstract class BaseSearchIndex<R extends IndexReader> {
 		    IntList delList = new IntArrayList(delDocs.size());
 	    	DocIDMapper idMapper = reader.getDocIDMaper();
 	    	LongIterator iter = delDocs.iterator();
-	        
+
 	    	while(iter.hasNext()){
 	    		long uid = iter.nextLong();
 	    		if (ZoieIndexReader.DELETED_UID!=uid){
@@ -172,7 +172,7 @@ public abstract class BaseSearchIndex<R extends IndexReader> {
 	        delArray = delList.toIntArray();
 	      }
 	    }
-	      
+
 	    if (delArray!=null && delArray.length > 0)
 	    {
 	      closeIndexWriter();
@@ -204,18 +204,18 @@ public abstract class BaseSearchIndex<R extends IndexReader> {
 	      }
 	    }
 	  }
-	  
+
 	  public void loadFromIndex(BaseSearchIndex<R> index) throws IOException
 	  {
 	    ZoieIndexReader<R> reader = index.openIndexReader();
 	    if(reader == null) return;
-	    
+
 	    Directory dir = reader.directory();
-	    
+
         LongSet delDocs = _delDocs;
         clearDeletes();
         deleteDocs(delDocs);
-	    
+
 	    IndexWriter writer = null;
 	    try
 	    {
@@ -227,9 +227,9 @@ public abstract class BaseSearchIndex<R extends IndexReader> {
 	      closeIndexWriter();
 	    }
 	  }
-	      
+
 	  abstract public IndexWriter openIndexWriter(Analyzer analyzer,Similarity similarity) throws IOException;
-	  
+
 	  public void closeIndexWriter()
       {
         if(_indexWriter != null)
@@ -245,12 +245,12 @@ public abstract class BaseSearchIndex<R extends IndexReader> {
           _indexWriter = null;
         }
       }
-	  
+
 	  public void incrementEventCount(int eventCount)
 	  {
 	    _eventsHandled+=eventCount;
 	  }
-	  
+
 	  public int getEventsHandled()
 	  {
 	    return _eventsHandled;

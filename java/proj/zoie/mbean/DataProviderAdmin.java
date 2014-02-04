@@ -19,20 +19,20 @@ import proj.zoie.impl.indexing.StreamDataProvider;
 
 public class DataProviderAdmin implements DataProviderAdminMBean {
     private final StreamDataProvider<?> _dataProvider;
-    
+
     public DataProviderAdmin(StreamDataProvider<?> dataProvider)
     {
     	_dataProvider=dataProvider;
     }
-    
+
 	public int getBatchSize() {
 		return _dataProvider.getBatchSize();
 	}
-	
+
 	public long getEventCount() {
 	  return _dataProvider.getEventCount();
 	}
-	
+
 	public long getEventsPerMinute() {
 	  return _dataProvider.getEventsPerMinute();
 	}
@@ -40,11 +40,11 @@ public class DataProviderAdmin implements DataProviderAdminMBean {
     public long getMaxEventsPerMinute() {
       return _dataProvider.getMaxEventsPerMinute();
     }
-    
+
     public void setMaxEventsPerMinute(long maxEventsPerMinute) {
       _dataProvider.setMaxEventsPerMinute(maxEventsPerMinute);
     }
-    
+
     public String getStatus() {
       return _dataProvider.getStatus();
     }

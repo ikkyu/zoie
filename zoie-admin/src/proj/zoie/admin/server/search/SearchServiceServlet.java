@@ -38,7 +38,7 @@ public class SearchServiceServlet extends RemoteServiceServlet implements Search
     factoryBean.afterPropertiesSet();
 		_searchSvc = (ZoieSearchService) factoryBean.getObject();
 	}
-	  
+
 	public SearchResult search(SearchRequest req)
 	{
     proj.zoie.service.api.SearchResult result = null;

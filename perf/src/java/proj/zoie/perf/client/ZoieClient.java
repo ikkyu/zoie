@@ -19,7 +19,7 @@ public class ZoieClient {
 	    factoryBean.afterPropertiesSet();
 
 	    final ZoieSearchService svc = (ZoieSearchService) (factoryBean.getObject());
-	    
+
 	    SearchRequest req = new SearchRequest();
 	   // req.setQuery("java");
 	    SearchResult res = svc.search(req);

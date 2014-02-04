@@ -24,19 +24,19 @@ public class DefaultDirectoryManager implements DirectoryManager
   public static final Logger log = Logger.getLogger(DefaultDirectoryManager.class);
 
   private File _location;
-  
+
   public DefaultDirectoryManager(File location)
   {
     if (location==null) throw new IllegalArgumentException("null index directory.");
 
     _location = location;
   }
-  
+
   public File getLocation()
   {
     return _location;
   }
-  
+
   public List<Directory> getAllArchivedDirectories()
   {
     throw new UnsupportedOperationException();
@@ -46,7 +46,7 @@ public class DefaultDirectoryManager implements DirectoryManager
   {
     return getDirectory(false);
   }
-  
+
   public Directory getDirectory(boolean create) throws IOException
   {
     if(!_location.exists() && create)
@@ -54,7 +54,7 @@ public class DefaultDirectoryManager implements DirectoryManager
       // create the parent directory
       _location.mkdirs();
     }
-    
+
     if(create)
     {
       IndexSignature sig = null;
@@ -62,7 +62,7 @@ public class DefaultDirectoryManager implements DirectoryManager
       {
         sig = getCurrentIndexSignature();
       }
-      
+
       if (sig == null)
       {
         File directoryFile = new File(_location, INDEX_DIRECTORY);
@@ -77,10 +77,10 @@ public class DefaultDirectoryManager implements DirectoryManager
         }
       }
     }
-    
+
     return FSDirectory.open(_location);
   }
-  
+
   public static IndexSignature readSignature(File file)
   {
     if (file.exists())
@@ -117,7 +117,7 @@ public class DefaultDirectoryManager implements DirectoryManager
       return null;
     }
   }
-  
+
   private void saveSignature(IndexSignature sig, File file) throws IOException
   {
     if (!file.exists())
@@ -145,7 +145,7 @@ public class DefaultDirectoryManager implements DirectoryManager
       }
     }
   }
-   
+
   /**
    * Gets the current signature
    * @param indexHome
@@ -163,7 +163,7 @@ public class DefaultDirectoryManager implements DirectoryManager
     IndexSignature sig = getCurrentIndexSignature();
     return sig == null ? 0L : sig.getVersion();
   }
-  
+
   public void setVersion(long version) throws IOException
   {
     // update new index file
@@ -185,28 +185,28 @@ public class DefaultDirectoryManager implements DirectoryManager
       throw e;
     }
   }
-  
+
   public Date getLastIndexModifiedTime()
   {
     File directoryFile = new File(_location, INDEX_DIRECTORY);
-    return new Date(directoryFile.lastModified());      
+    return new Date(directoryFile.lastModified());
   }
-  
+
   public String getPath()
   {
     return _location.getAbsolutePath();
   }
-  
+
   public void purge()
-  { 
+  {
     FileUtil.rmDir(_location);
   }
-  
+
   public boolean exists()
   {
     return _location.exists();
   }
-  
+
   public boolean transferFromChannelToFile(ReadableByteChannel channel, String fileName) throws IOException
   {
     if(!_location.exists())
@@ -214,10 +214,10 @@ public class DefaultDirectoryManager implements DirectoryManager
       // create the parent directory
       _location.mkdirs();
     }
- 
+
     long dataLen = ChannelUtil.readLong(channel);
     if(dataLen < 0) return false;
-    
+
     File file = new File(_location, fileName);
     RandomAccessFile raf = null;
     FileChannel fc = null;
@@ -232,7 +232,7 @@ public class DefaultDirectoryManager implements DirectoryManager
       if(raf != null) raf.close();
     }
   }
-  
+
   public long transferFromFileToChannel(String fileName, WritableByteChannel channel) throws IOException
   {
     long amount = 0;

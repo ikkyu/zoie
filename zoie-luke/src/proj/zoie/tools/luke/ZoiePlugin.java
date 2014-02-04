@@ -13,7 +13,7 @@ import proj.zoie.api.ZoieIndexReader;
 
 public class ZoiePlugin extends LukePlugin {
 	private ZoieIndexReader _zoieReader;
-	
+
 	public ZoiePlugin() {
 		_zoieReader = null;
 	}
@@ -42,7 +42,7 @@ public class ZoiePlugin extends LukePlugin {
 	public boolean init() throws Exception {
 		return true;
 	}
-	
+
 	public void toUID(){
 		Object srcArea = app.find(myUi, "docids");
 		String val = app.getString(srcArea, "text");
@@ -82,7 +82,7 @@ public class ZoiePlugin extends LukePlugin {
 			}
 		}
 	}
-	
+
 	public void toDocID(){
 		Object srcArea = app.find(myUi, "uids");
 		String val = app.getString(srcArea, "text");
@@ -124,7 +124,7 @@ public class ZoiePlugin extends LukePlugin {
 			}
 		}
 	}
-	
+
 	private ZoieIndexReader getZoieReader() throws IOException{
 		if (_zoieReader == null){
 			IndexReader innerReader = super.getIndexReader();

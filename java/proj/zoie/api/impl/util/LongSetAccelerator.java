@@ -28,9 +28,9 @@ import it.unimi.dsi.fastutil.longs.LongSet;
  * filter. The hash table size and the hash function are tuned for fast
  * calculation of hash values. The underlying LongSet should not be updated
  * while this accelerator is in use.
- * 
+ *
  * @author ymatsuda
- * 
+ *
  */
 public class LongSetAccelerator implements LongSet {
 	private final long[] _filter;

@@ -27,24 +27,24 @@ public class PerfTest {
 		{
 			set1.add(rand.nextInt(max));
 		}
-		
+
 		IntSet set2 = new IntOpenHashSet();
 		for (int i : set1)
 		{
 			set2.add(i);
 		}
-		
+
 		int[] set3 = set1.toIntArray();
 		Arrays.sort(set3);
-		
+
 		BitSet set4 = new BitSet();
 		for (int i : set1)
 		{
 			set4.set(i);
 		}
-		
+
 		long start,end;
-		
+
 		start=System.nanoTime();
 		for (int i=0;i<docs.length;++i)
 		{
@@ -52,7 +52,7 @@ public class PerfTest {
 		}
 		end=System.nanoTime();
 		System.out.println("set1: "+(end-start)/1000000);
-		
+
 		start=System.nanoTime();
 		for (int i=0;i<docs.length;++i)
 		{
@@ -60,7 +60,7 @@ public class PerfTest {
 		}
 		end=System.nanoTime();
 		System.out.println("set2: "+(end-start)/1000000);
-		
+
 		start=System.nanoTime();
 		for (int i=0;i<docs.length;++i)
 		{
@@ -68,7 +68,7 @@ public class PerfTest {
 		}
 		end=System.nanoTime();
 		System.out.println("set3: "+(end-start)/1000000);
-		
+
 		start=System.nanoTime();
 		for (int i=0;i<docs.length;++i)
 		{

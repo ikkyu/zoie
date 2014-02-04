@@ -45,33 +45,33 @@ import proj.zoie.api.indexing.ZoieIndexable.IndexingReq;
 
 public class LuceneNRTDataConsumer<V> implements DataConsumer<V>,IndexReaderFactory<IndexReader>{
 	private static final Logger logger = Logger.getLogger(LuceneNRTDataConsumer.class);
-	
+
 	/**
 	 * document ID field name
 	*/
 	public static final String DOCUMENT_ID_FIELD = "id";
-	  
-	
+
+
 	private IndexWriter _writer;
 	private Analyzer _analyzer;
 	private ZoieIndexableInterpreter<V> _interpreter;
 	private Directory _dir;
-	
+
 	public LuceneNRTDataConsumer(File dir,ZoieIndexableInterpreter<V> interpreter) throws IOException{
 		this(FSDirectory.open(dir),new StandardAnalyzer(Version.LUCENE_CURRENT),interpreter);
 	}
-	
+
 	public LuceneNRTDataConsumer(File dir,Analyzer analyzer,ZoieIndexableInterpreter<V> interpreter) throws IOException{
 		this(FSDirectory.open(dir),analyzer,interpreter);
 	}
-	
+
 	public LuceneNRTDataConsumer(Directory dir,Analyzer analyzer,ZoieIndexableInterpreter<V> interpreter){
 		_writer = null;
 		_analyzer = analyzer;
 		_interpreter = interpreter;
 		_dir = dir;
 	}
-	
+
 	public void start(){
 		try {
 			_writer = new IndexWriter(_dir, _analyzer,MaxFieldLength.UNLIMITED);
@@ -79,7 +79,7 @@ public class LuceneNRTDataConsumer<V> implements DataConsumer<V>,IndexReaderFact
 			logger.error("uanble to start consumer: "+e.getMessage(),e);
 		}
 	}
-	
+
 	public void shutdown(){
 		if (_writer!=null){
 			try {
@@ -89,24 +89,24 @@ public class LuceneNRTDataConsumer<V> implements DataConsumer<V>,IndexReaderFact
 			}
 		}
 	}
-	
+
 	public void consume(Collection<proj.zoie.api.DataConsumer.DataEvent<V>> events)
 			throws ZoieException {
 		if (_writer == null){
 			throw new ZoieException("Internal IndexWriter null, perhaps not started?");
 		}
-		
+
 		if (events.size() > 0){
 			for (DataEvent<V> event : events){
 				ZoieIndexable indexable = _interpreter.convertAndInterpret(event.getData());
 				if (indexable.isSkip()) continue;
-				
+
 				try {
 				  _writer.deleteDocuments(new Term(DOCUMENT_ID_FIELD,String.valueOf(indexable.getUID())));
 				} catch(IOException e) {
 				  throw new ZoieException(e.getMessage(),e);
 				}
-				  
+
 			  IndexingReq[] reqs = indexable.buildIndexingReqs();
 			  for (IndexingReq req : reqs){
 				Analyzer localAnalyzer = req.getAnalyzer();
@@ -122,8 +122,8 @@ public class LuceneNRTDataConsumer<V> implements DataConsumer<V>,IndexReaderFact
 				}
 			  }
 			}
-			
-			
+
+
 			int numdocs;
 			try {
 				// for realtime commit is not needed per lucene mailing list
@@ -132,7 +132,7 @@ public class LuceneNRTDataConsumer<V> implements DataConsumer<V>,IndexReaderFact
 			} catch (IOException e) {
 				throw new ZoieException(e.getMessage(),e);
 			}
-			
+
 			logger.info("flushed "+events.size()+" events to index, index now contains "+numdocs+" docs.");
 		}
 	}

@@ -28,10 +28,10 @@ public class MemoryStreamDataProvider<V> extends StreamDataProvider<V> {
 	  private List<DataEvent<V>> _list;
 	  private int _count;
 	  private boolean _stop;
-	  
+
 	  // private static final double DEFAULT_ITERS_PER_SECOND=100.0;
 	  private static final Logger log = Logger.getLogger(MemoryStreamDataProvider.class);
-	  
+
 	  public MemoryStreamDataProvider()
 	  {
 	    super();
@@ -39,7 +39,7 @@ public class MemoryStreamDataProvider<V> extends StreamDataProvider<V> {
 	    _count=0;
 	    _stop=false;
 	  }
-	  
+
 	  @Override
 	  public void reset()
 	  {
@@ -49,14 +49,14 @@ public class MemoryStreamDataProvider<V> extends StreamDataProvider<V> {
 	      this.notifyAll();
 	    }
 	  }
-	  
+
 	  public void flush()
 	  {
         synchronized(this)
         {
           while(!_list.isEmpty() && !_stop)
           {
-            this.notifyAll();			
+            this.notifyAll();
             try
             {
               this.wait();
@@ -65,10 +65,10 @@ public class MemoryStreamDataProvider<V> extends StreamDataProvider<V> {
             {
               log.warn(e.getMessage());
             }
-          }    	    	
-	    } 
+          }
+	    }
 	  }
-	  
+
       public void addEvents(List<DataEvent<V>> list)
       {
         if (list!=null && !list.isEmpty())
@@ -99,7 +99,7 @@ public class MemoryStreamDataProvider<V> extends StreamDataProvider<V> {
           }
         }
       }
-	  
+
 	  @Override
 	  public DataEvent<V> next()
 	  {
@@ -108,11 +108,11 @@ public class MemoryStreamDataProvider<V> extends StreamDataProvider<V> {
         {
           while(_list.isEmpty() && !_stop)
           {
-            try 
+            try
             {
               this.wait();
             }
-            catch (InterruptedException e) 
+            catch (InterruptedException e)
             {
               log.warn(e.getMessage());
             }
@@ -125,7 +125,7 @@ public class MemoryStreamDataProvider<V> extends StreamDataProvider<V> {
         }
 	    return obj;
 	  }
-	  
+
 	  public int getCount()
 	  {
 	    synchronized(this)

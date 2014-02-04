@@ -7,9 +7,9 @@
 	<property name="settings" value="settings" />
 	<property name="conf" value="conf" />
 	<property name="example.src" value="java" />
-	
+
 	<property name="build" value="build"/>
-		
+
 	<path id="compile.class.path">
 		  <fileset dir="${lib.dir}/master">
 			<include name="*.jar" />
@@ -18,22 +18,22 @@
 			<include name="zoie-*.jar" />
 		  </fileset>
 	</path>
-		
+
 	<target name="clean">
 		<delete dir="${build}"/>
 	</target>
-		
+
 	<target name="init">
 		<mkdir dir="${build}"/>
 	</target>
-		
+
 	<target name="compile" depends="init">
 		<javac destdir="${build}">
            <src path="${example.src}"/>
            <classpath refid="compile.class.path"/>
        </javac>
     </target>
-	
+
 	<target name="dist" depends="compile">
 	    <copy file="${settings}/index.properties" todir="${build}" />
 	    <replace file="${build}/index.properties" token="@zoie.root@" value="${zoie.root}" />

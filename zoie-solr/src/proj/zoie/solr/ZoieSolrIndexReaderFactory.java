@@ -22,14 +22,14 @@ import proj.zoie.impl.indexing.ZoieSystem;
 
 public class ZoieSolrIndexReaderFactory<V> extends IndexReaderFactory {
 	private ZoieSystem<IndexReader,V> _zoieSystem = null;
-	
+
 	private ZoieIndexableInterpreter<V> _interpreter = null;
 	private int _batchSize;
 	private long _batchDelay;
 	private boolean _realtime;
 	private Analyzer _analyzer;
 	private Similarity _similarity;
-	
+
 	@Override
 	public void init(NamedList args) {
 		super.init(args);
@@ -78,7 +78,7 @@ public class ZoieSolrIndexReaderFactory<V> extends IndexReaderFactory {
 				    _zoieSystem.start();
 				  }
 				  else{
-					throw new IOException("directory not instance of "+FSDirectory.class); 
+					throw new IOException("directory not instance of "+FSDirectory.class);
 				  }
 			  }
 		  }

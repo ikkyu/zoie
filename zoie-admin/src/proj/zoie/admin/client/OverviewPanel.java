@@ -34,12 +34,12 @@ import com.google.gwt.visualization.client.visualizations.PieChart;
 public class OverviewPanel extends Composite {
 
 	private static final int NUM_CPU_DISPLAY = 10;
-	
+
 	interface MyUiBinder extends UiBinder<Widget, OverviewPanel> {}
 	private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
-	
+
 	private JMXAdminServiceAsync _jmxService;
-	
+
 	@UiField HTMLPanel topPanel;
 	@UiField FlowPanel memchartPanel;
 	@UiField FlowPanel cpuchartPanel;
@@ -50,10 +50,10 @@ public class OverviewPanel extends Composite {
 	@UiField FlexTable dataProviderTable;
   private PieChart memChart;
 	private AreaChart cpuChart;
-	
+
 	private Timer _refreshTimer;
 	private LinkedList<long[]> _cpuTimeList;
-	
+
 	public OverviewPanel(JMXAdminServiceAsync jmxService){
 		initWidget(uiBinder.createAndBindUi(this));
 		_jmxService = jmxService;
@@ -78,7 +78,7 @@ public class OverviewPanel extends Composite {
         _refreshTimer.scheduleRepeating(3000);
 
 	}
-	
+
 	private void updateServerInfo(){
 		_jmxService.getServerInfo(new AsyncCallback<ServerInfo>() {
 
@@ -89,7 +89,7 @@ public class OverviewPanel extends Composite {
 			public void onSuccess(ServerInfo info) {
 				updateLabels(info);
 			}
-			
+
 			private void updateLabels(ServerInfo info){
 				String serverString=null;
 				String platformString=null;
@@ -108,21 +108,21 @@ public class OverviewPanel extends Composite {
 
 	private void refreshSysInfo(){
 		 _jmxService.getRuntimeSystemInfo(new AsyncCallback<RuntimeSystemInfo>() {
-				
+
 				public void onSuccess(RuntimeSystemInfo usage) {
 					try{
 						_cpuTimeList.add(new long[]{usage.getCpuTime(),usage.getUserTime()});
 						if (_cpuTimeList.size()>NUM_CPU_DISPLAY){
 							_cpuTimeList.removeFirst();
 						}
-						
+
 						AbstractDataTable memDataTable = createMemTable(usage);
 						PieChart.Options memOptions = createMemOptions("Memory Usage");
-						
+
 
 						AbstractDataTable cpuDataTable = createCPUTable(_cpuTimeList);
 						AreaChart.Options cpuOptions = createCPUOptions("CPU Time");
-						
+
 						memChart.draw(memDataTable,memOptions);
 						cpuChart.draw(cpuDataTable,cpuOptions);
 				//		pie.setVisible(true);
@@ -131,7 +131,7 @@ public class OverviewPanel extends Composite {
 						memChart.draw(createMemTable(null),createMemOptions("Error: "+th.getMessage()));
 					}
 				}
-				
+
 				public void onFailure(Throwable throwable) {
 					memChart.draw(createMemTable(null),createMemOptions("Error: "+throwable.getMessage()));
 				}
@@ -200,13 +200,13 @@ public class OverviewPanel extends Composite {
               public void onFailure(Throwable arg0)
               {
                 // TODO Auto-generated method stub
-                
+
               }
 
               public void onSuccess(Void arg0)
               {
                 // TODO Auto-generated method stub
-                
+
               }});
           }});
          dataProviderTable.setWidget(i, 1, buttonstart);
@@ -221,20 +221,20 @@ public class OverviewPanel extends Composite {
                public void onFailure(Throwable arg0)
                {
                  // TODO Auto-generated method stub
-                 
+
                }
 
                public void onSuccess(Void arg0)
                {
                  // TODO Auto-generated method stub
-                 
+
                }});
            }});
          dataProviderTable.setWidget(i, 1, buttonstop);
        }
       });
 	}
-	
+
 	static private AreaChart.Options createCPUOptions(String title) {
 		AreaChart.Options options = AreaChart.Options.create();
 	    options.setWidth(400);
@@ -242,7 +242,7 @@ public class OverviewPanel extends Composite {
 	    options.setTitle(title);
 	    return options;
 	}
-	
+
 	static private PieChart.Options createMemOptions(String title) {
 		PieChart.Options options = PieChart.Options.create();
 	    options.setWidth(400);
@@ -251,7 +251,7 @@ public class OverviewPanel extends Composite {
 	    options.setTitle(title);
 	    return options;
 	}
-	
+
 	private static AbstractDataTable createCPUTable(LinkedList<long[]> cpuTimes) {
 	    DataTable data = DataTable.create();
 	    data.addColumn(ColumnType.NUMBER, "CPU Times (millis)");
@@ -259,7 +259,7 @@ public class OverviewPanel extends Composite {
 	    int size = cpuTimes.size();
 	    data.addRows(size);
 	    int idx = 0;
-	    
+
 	    for (long[] cpuTime : cpuTimes){
 	    	long cpuInMillis = cpuTime[0]/1000000;
 	    	long userInMillis = cpuTime[1]/1000000;
@@ -269,7 +269,7 @@ public class OverviewPanel extends Composite {
 	    }
 	    return data;
 	}
-	
+
 	private static AbstractDataTable createMemTable(RuntimeSystemInfo sysInfo) {
 	    DataTable data = DataTable.create();
 	    data.addColumn(ColumnType.STRING, "Memory Usage");

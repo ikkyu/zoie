@@ -48,7 +48,7 @@ public class DiskSearchIndex<R extends IndexReader> extends BaseSearchIndex<R>{
   public static final Logger log = Logger.getLogger(DiskSearchIndex.class);
 
   DiskSearchIndex(DirectoryManager dirMgr, IndexReaderDecorator<R> decorator,SearchIndexManager<R> idxMgr){
-    super(idxMgr);  
+    super(idxMgr);
     _dirMgr = dirMgr;
     _mergePolicyParams = new MergePolicyParams();
     _dispenser = new IndexReaderDispenser<R>(_dirMgr, decorator,this);
@@ -142,7 +142,7 @@ public class DiskSearchIndex<R extends IndexReader> extends BaseSearchIndex<R>{
 	  {
 	    close();
 	  }
-	  
+
 
   /**
    * Opens an index modifier.
@@ -158,7 +158,7 @@ public class DiskSearchIndex<R extends IndexReader> extends BaseSearchIndex<R>{
     log.info("opening index writer at: "+_dirMgr.getPath());
 
     // create a new modifier to the index, assuming at most one instance is running at any given time
-    boolean create = !IndexReader.indexExists(directory);  
+    boolean create = !IndexReader.indexExists(directory);
     IndexWriter idxWriter = new IndexWriter(directory, analyzer, create, _deletionPolicy, MaxFieldLength.UNLIMITED);
     idxWriter.setMergeScheduler(_mergeScheduler);
 
@@ -190,7 +190,7 @@ public class DiskSearchIndex<R extends IndexReader> extends BaseSearchIndex<R>{
   @Override
   protected IndexReader openIndexReaderForDelete() throws IOException {
     Directory directory = _dirMgr.getDirectory(true);
-    if (IndexReader.indexExists(directory)){		
+    if (IndexReader.indexExists(directory)){
       return IndexReader.open(directory,false);
     }
     else{

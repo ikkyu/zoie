@@ -38,7 +38,7 @@ while test "$#" -gt 0
 do
   case "$1" in
   -debug)	     JAVA_DEBUG_FLAGS="${JAVA_DEBUG_FLAGS} -Xrunjdwp:transport=dt_socket,address=8002,server=y,suspend=y";;
-	
+
 	esac
   shift
 done
